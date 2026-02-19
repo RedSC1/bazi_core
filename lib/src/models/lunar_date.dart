@@ -314,7 +314,7 @@ class LunarDate {
       "三十",
     ];
     if (day < 1 || day > days.length) {
-      return "${day}日";
+      return "$day日";
     }
     return days[day - 1];
   }

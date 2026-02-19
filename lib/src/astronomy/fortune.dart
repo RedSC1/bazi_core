@@ -129,10 +129,6 @@ class Fortune {
           bz.time,
           direction,
         );
-        break;
-      default:
-        throw UnimplementedError("该大运算法尚未实现: $daYunAlgorithm");
-      //剩下的流派以后再说
     }
     return Fortune(
       bz.time.clockTime,
