@@ -1,6 +1,6 @@
 name: bazi_core
 description: "Dart/Flutter 八字（BaZi）计算库，支持真太阳时、早晚子时配置、农历/阳历转换等功能。"
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/RedSC1/bazi_core
 
 environment:

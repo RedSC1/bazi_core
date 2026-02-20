@@ -5,10 +5,11 @@ import 'package:test/test.dart';
 
 void main() {
   test('BaziChart and Fortune calculation', () {
-    final bt = AstroDateTime(2026, 2, 19, 20, 28, 0);
+    final bt = AstroDateTime(2026, 2, 19, 23, 28, 0);
     final chart = BaziChart.createBySolarDate(
       clockTime: bt,
       gender: Gender.male,
+      splitByRatHour: false,
     );
 
     final fortune = Fortune.createByBaziChart(chart);
@@ -32,8 +33,21 @@ void main() {
       );
     }
 
-    // Add basic assertions to verify the test runs correctly
     expect(chart.bazi, isNotNull);
     expect(fortune, isNotNull);
+  });
+
+  test('GanZhi getKongWang', () {
+    final gz1 = GanZhi(TianGan.jia, DiZhi.zi);
+    expect(gz1.getKongWang(), equals([DiZhi.xu, DiZhi.hai]));
+
+    final gz2 = GanZhi(TianGan.jia, DiZhi.xu);
+    expect(gz2.getKongWang(), equals([DiZhi.shen, DiZhi.you]));
+
+    final gz3 = GanZhi(TianGan.jia, DiZhi.shen);
+    expect(gz3.getKongWang(), equals([DiZhi.wu, DiZhi.wei]));
+
+    final gz4 = GanZhi(TianGan.yi, DiZhi.chou);
+    expect(gz4.getKongWang(), equals([DiZhi.hai, DiZhi.xu]));
   });
 }

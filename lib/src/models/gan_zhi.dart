@@ -93,6 +93,21 @@ class GanZhi {
   GanZhi operator +(int step) => offset(step);
   GanZhi operator -(int step) => offset(-step);
 
+  List<DiZhi> getKongWang() {
+    int k1 = (10 - (index ~/ 10) * 2) % 12;
+    if (k1 < 0) k1 += 12;
+    int k2 = (k1 + 1) % 12;
+
+    if (gan.isYang) {
+      return (k1 % 2 == 0)
+          ? [DiZhi.values[k1], DiZhi.values[k2]]
+          : [DiZhi.values[k2], DiZhi.values[k1]];
+    }
+    return (k1 % 2 != 0)
+        ? [DiZhi.values[k1], DiZhi.values[k2]]
+        : [DiZhi.values[k2], DiZhi.values[k1]];
+  }
+
   @override
   String toString() => "${gan.label}${zhi.label}";
 }

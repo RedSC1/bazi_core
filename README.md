@@ -23,7 +23,7 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.1.0
+  bazi_core: ^0.1.1
   sxwnl_spa_dart: ^0.9.6
 ```
 
@@ -86,6 +86,28 @@ void main() {
   );
   
   print('八字: ${chart.bazi}');
+}
+```
+
+### 4. 获取空亡地支
+
+获取该干支所在旬的空亡地支列表。
+**注意**：返回列表的顺序为 **同性在前，异性在后**（即与天干阴阳相同的地支排在第一位，不同的排在第二位）。
+
+```dart
+import 'package:bazi_core/bazi_core.dart';
+
+void main() {
+  // 创建一个干支（例如：甲子，甲为阳干）
+  final gz = GanZhi(TianGan.jia, DiZhi.zi);
+  
+  // 获取该干支所在旬的空亡地支
+  // 甲子旬空亡为 戌(阳)、亥(阴)
+  final kongWang = gz.getKongWang();
+  
+  // 输出结果：[DiZhi.xu, DiZhi.hai]
+  // 戌(阳)与甲(阳)同性，故在前；亥(阴)与甲(阳)异性，故在后。
+  print('甲子旬空亡: ${kongWang.map((e) => e.label).toList()}'); // [戌, 亥]
 }
 ```
 
