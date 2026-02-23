@@ -1,3 +1,7 @@
+## 0.1.2
+
+- 升级依赖 `sxwnl_spa_dart` 至 `0.9.7` 以修复节气计算问题
+
 ## 0.1.1
 
 - GanZhi 新增 getKongWang
