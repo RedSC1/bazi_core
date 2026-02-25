@@ -1,5 +1,3 @@
-import 'package:bazi_core/src/models/gan_zhi.dart';
-import 'package:bazi_core/src/models/timepack.dart';
 import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
 
 class TimeAdaptor {

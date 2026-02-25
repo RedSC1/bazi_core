@@ -23,8 +23,8 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.1.2
-  sxwnl_spa_dart: ^0.9.7
+  bazi_core: ^0.1.3
+  sxwnl_spa_dart: ^0.10.0
 ```
 
 ## 快速开始
@@ -302,7 +302,7 @@ void main() {
 
 ## 依赖
 
-- `sxwnl_spa_dart: ^0.9.6` - 天文算法库
+- `sxwnl_spa_dart: ^0.10.0` - 天文算法库
 
 ## 许可证
 
