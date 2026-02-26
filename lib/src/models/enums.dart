@@ -9,5 +9,54 @@ enum DaYunAlgorithm {
 
 enum Gender{
   male,
-  female
+  female,
+}
+
+enum YinYang{
+  yin,
+  yang,
+}
+
+enum WuXing {
+  water,
+  wood,
+  metal,
+  earth,
+  fire,
+}
+
+/// 十神
+enum ShiShen {
+  biJian,    // 比肩
+  jieCai,    // 劫财
+  shiShen,   // 食神
+  shangGuan, // 伤官
+  pianCai,   // 偏财
+  zhengCai,  // 正财
+  qiSha,     // 七杀 (偏官)
+  zhengGuan, // 正官
+  pianYin,   // 偏印 (枭神)
+  zhengYin,  // 正印
+}
+
+/// 长生十二神
+enum TwelveLifeStage {
+  zhangSheng, // 长生
+  muYu,       // 沐浴
+  guanDai,    // 冠带
+  linGuan,    // 临官
+  diWang,     // 帝旺
+  shuai,      // 衰
+  bing,       // 病
+  si,         // 死
+  mu,         // 墓
+  jue,        // 绝
+  tai,        // 胎
+  yang,       // 养
+}
+
+/// 土同宫算法
+enum EarthPalaceAlgorithm {
+  fireEarth,  // 火土同宫 (戊随丙, 己随丁)
+  waterEarth, // 水土同宫 (戊随壬, 己随癸)
 }

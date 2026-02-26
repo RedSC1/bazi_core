@@ -3,3 +3,5 @@ export 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart'
 export 'src/astronomy/time_adapter.dart';
 export 'src/models/bazi_chart.dart';
 export 'src/models/enums.dart';
+export 'src/models/bazi_table.dart';
+export 'src/models/relationship.dart';

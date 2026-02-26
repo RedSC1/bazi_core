@@ -23,7 +23,7 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.1.3
+  bazi_core: ^0.2.0
   sxwnl_spa_dart: ^0.10.0
 ```
 
