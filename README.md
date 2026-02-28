@@ -23,8 +23,8 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.2.0
-  sxwnl_spa_dart: ^0.10.0
+  bazi_core: ^0.3.0
+  sxwnl_spa_dart: ^0.10.1
 ```
 
 ## 快速开始

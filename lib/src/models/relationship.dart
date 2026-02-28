@@ -1,5 +1,4 @@
 import 'package:bazi_core/bazi_core.dart';
-import 'package:bazi_core/src/models/bazi_table.dart';
 
 class Relationship {
   // 当日主为“阳干”时，目标干与日主的位移(0-9)对应的十神

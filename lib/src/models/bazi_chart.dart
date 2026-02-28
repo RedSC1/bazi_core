@@ -1,5 +1,6 @@
 import 'package:bazi_core/src/astronomy/time_adapter.dart';
 import 'package:bazi_core/src/models/enums.dart';
+import 'package:bazi_core/src/models/interaction_calculator.dart';
 import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
 
 class BaziChart {
@@ -68,5 +69,43 @@ class BaziChart {
     );
     final bz = TimeAdaptor.fromSolar(tp, splitRatHour: splitByRatHour);
     return BaziChart(tp, bz, lunarDate, gender);
+  }
+
+  /// 获取八字原局内部的所有干支感应 (刑冲合害等)
+  List<InteractionResult> getAllInteractions() {
+    return getInteractionsWith();
+  }
+
+  /// 获取八字原局与外部（如大运、流年）组合后的所有感应
+  /// 
+  /// [otherStems] 和 [otherBranches] 允许传入额外的干支节点进行池化扫描
+  List<InteractionResult> getInteractionsWith({
+    List<InteractionNode<TianGan>> otherStems = const [],
+    List<InteractionNode<DiZhi>> otherBranches = const [],
+  }) {
+    // 1. 构建天干池 (原局四柱 + 外部传入)
+    final List<InteractionNode<TianGan>> stemPool = [
+      InteractionNode(PillarType.year, bazi.year.gan),
+      InteractionNode(PillarType.month, bazi.month.gan),
+      InteractionNode(PillarType.day, bazi.day.gan),
+      InteractionNode(PillarType.hour, bazi.time.gan),
+      ...otherStems,
+    ];
+
+    // 2. 构建地支池 (原局四柱 + 外部传入)
+    final List<InteractionNode<DiZhi>> branchPool = [
+      InteractionNode(PillarType.year, bazi.year.zhi),
+      InteractionNode(PillarType.month, bazi.month.zhi),
+      InteractionNode(PillarType.day, bazi.day.zhi),
+      InteractionNode(PillarType.hour, bazi.time.zhi),
+      ...otherBranches,
+    ];
+
+    // 3. 执行计算
+    final List<InteractionResult> results = [];
+    results.addAll(BaziInteractionCalculator.calculateStemInteractions(stemPool));
+    results.addAll(BaziInteractionCalculator.calculateBranchInteractions(branchPool));
+
+    return results;
   }
 }
