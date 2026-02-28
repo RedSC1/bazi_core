@@ -1,5 +1,5 @@
 export 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart'
-    show GanZhi, TianGan, DiZhi, BaZi, LunarDate, TimePack;
+    show GanZhi, TianGan, DiZhi, BaZi, LunarDate, TimePack, YearInfo, DayInfo, yearGanZhi, getYearRange, getYearMonthGanZhi, getDayHourGanZhi;
 export 'src/astronomy/time_adapter.dart';
 export 'src/models/bazi_chart.dart';
 export 'src/models/enums.dart';

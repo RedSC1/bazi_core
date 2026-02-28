@@ -84,6 +84,12 @@ class Decade {
     return Decade(index, st, et, sAge, eAge, gz);
   }
 
+  /// 获取这一步大运中的 10 个流年信息
+  List<YearInfo> get flowYears {
+    // 大运通常覆盖 10 年范围
+    return getYearRange(startTime.year, startTime.year + 9);
+  }
+
   static bool _isLeapYear(int year) {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
   }
@@ -232,7 +238,24 @@ class Fortune {
     );
   }
 
+  /// 根据当前年龄获取这一年的流年干支
+  YearInfo getFlowYearByAge(int age) {
+    final targetYear = birthday.year + age - 1;
+    return YearInfo(year: targetYear, ganZhi: yearGanZhi(targetYear));
+  }
+
   GanZhi getXiaoYunByAge(int age) {
     return xiaoYunBase + age * direction;
+  }
+
+  /// 获取指定年份区间内的所有流年信息
+  List<YearInfo> getFlowYears(int startYear, int endYear) {
+    return getYearRange(startYear, endYear);
+  }
+
+  /// 获取某一年的 12 个流月干支 (基于五虎遁)
+  List<GanZhi> getFlowMonths(int year) {
+    final yg = yearGanZhi(year).gan;
+    return getYearMonthGanZhi(yg);
   }
 }
