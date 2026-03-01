@@ -1,3 +1,8 @@
+## 0.4.1
+
+- **新增胎息计算**: 在 `BaziChart` 中增加 `taiXi` 属性，支持计算日柱的天地双合（胎息）。
+- **新增干支合伴查询**: 在 `BaziTable` 中增加 `getStemCombinationPartner` 和 `getBranchCombinationPartner` 辅助方法。
+
 ## 0.4.0
 
 - **新增神煞分析系统**: 引入 `ShenShaHelper` 和 `ShenShaInfo`，支持全盘神煞检测（实验性功能）。
