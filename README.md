@@ -134,6 +134,44 @@ for (var fy in decade.flowYears) {
 
 覆盖判定: `stemCombination` (五合), `stemClash` (四冲), `branchTripleCombination` (三合全), `branchHalfCombination` (半合局), `branchArchingCombination` (拱合), `branchTripleDirection` (三会), `branchClash` (六冲), `branchCombination` (六合), `branchHarm` (六害), `branchDestruction` (相破), `branchTriplePunishment` (三刑全), `branchPunishment` (相刑), `branchSelfPunishment` (自刑), `branchHiddenCombination` (暗合), `branchSeverance` (相绝)。
 
+## 🧪 实验性功能：神煞分析
+
+> ⚠️ **注意**：本功能代码由 AI 辅助录入，目前包含多种常见神煞（如天乙贵人、驿马、桃花、魁罡等）。
+> 虽然经过初步测试，但尚未进行大规模人工校验，可能存在遗漏或判定偏差。请谨慎用于生产环境，并欢迎提交 PR 修正。
+
+### 功能特点
+- **全盘扫描**：支持原局四柱（年/月/日/时）的神煞检测。
+- **岁运集成**：支持大运、流年、流月、流日、流时的神煞分析。
+- **复杂规则**：涵盖整柱匹配（如魁罡）、干查支（如天乙）、支查支（如桃花）、季节/纳音相关（如天赦、月德）等多种规则。
+
+### 使用示例
+
+```dart
+import 'package:bazi_core/bazi_core.dart';
+
+// 1. 创建八字排盘
+final chart = BaziChart.createBySolarDate(
+  clockTime: AstroDateTime(2024, 1, 1, 12, 0, 0),
+);
+
+// 2. 准备岁运干支 (可选)
+final daYun = GanZhi.fromName('庚辰');
+final liuNian = GanZhi.fromName('辛巳');
+
+// 3. 执行分析
+final info = ShenShaHelper.analyze(
+  chart,
+  daYun: daYun,
+  liuNian: liuNian,
+  // 也可以传入流月/流日/流时
+);
+
+// 4. 查看结果
+print('年柱神煞: ${info.yearShenSha}');
+print('日柱神煞: ${info.dayShenSha}');
+print('流年神煞: ${info.liuNianShenSha}');
+```
+
 ## 🤝 参与贡献
 
 欢迎大家提交 Issue 和 Pull Request 来帮助扩展和健壮它！
