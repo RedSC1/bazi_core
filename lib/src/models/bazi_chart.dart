@@ -30,122 +30,36 @@ class BaziChart {
   }
 
   /// 修正后的宫位计算用月份 (过中气算下个月)
+  // ai写的代码真不行，我重构了一下下面的命宫身宫算法的代码
   int _getGongMonthIndex() {
     // 1. 获取当前八字月支 (0-based)
     final m = bazi.month.zhi.index;
-
-    // 2. 计算目标中气索引 (Target Qi Index)
-    // 映射关系：
-    // 子(0) -> 冬至(23)
-    // 丑(1) -> 大寒(1)
-    // 寅(2) -> 雨水(3)
-    // ...
-    // 公式: ((m - 1 + 12) % 12) * 2 + 1
-    final targetQiIndex = ((m - 1 + 12) % 12) * 2 + 1;
-
-    try {
-      // 3. 获取当年节气列表
-      // getYearJieQi 返回从上一年冬至到本年冬至的列表 (北京时间)
-      final jieQiList = getYearJieQi(time.clockTime.year);
-
-      // 4. 找到对应的中气
-      // 可能有多个(比如冬至)，找时间最近的一个
-      // 这里的比较基准用 UTC 时间戳，避免时区混乱
-      final birthUtcJd = time.utcTime.toJ2000();
-
-      JieQiResult? targetQi;
-      double minDiff = double.maxFinite;
-
-      for (final jq in jieQiList) {
-        if (jq.index == targetQiIndex) {
-          // jq.jd 是北京时间(UTC+8)的 J2000 相对日
-          // 转换为 UTC JD: jq.jd - 8/24
-          // 但注意: sxwnl 的 getJulianDay() 返回的是 UTC JD
-          // jq.dateTime 是 Beijing Time
-          // 我们直接用 jq.jd (Beijing Time) 还原为 UTC JD 比较稳妥
-          // 或者直接用 dateTime 转换
-
-          // 修正: JieQiResult.jd 是 "J2000 相对儒略日 (北京时间)"
-          // AstroDateTime.getJulianDay() 返回的是 "J2000 相对儒略日 (UTC)" (通常)
-          // 让我们检查 AstroDateTime.getJulianDay 实现
-          // 假设它是标准的 J2000
-
-          // 简单起见，我们将 jq.jd (BJ) 转为 UTC JD
-          final qiUtcJd = jq.jd - 8.0 / 24.0;
-
-          final diff = (qiUtcJd - birthUtcJd).abs();
-          if (diff < minDiff) {
-            minDiff = diff;
-            targetQi = jq;
-          }
-        }
-      }
-
-      if (targetQi != null) {
-        final qiUtcJd = targetQi.jd - 8.0 / 24.0;
-
-        // 5. 判断是否过中气
-        if (birthUtcJd >= qiUtcJd) {
-          return (m + 1) % 12; // 过中气，算下个月
-        }
-      }
-
-      return m;
-    } catch (e) {
-      // 降级处理
+    var prevJieQi = getPrevJieQi(time.bjClt);
+    if (prevJieQi != null && isQi(prevJieQi.index)) {
+      return (m + 1) % 12;
+    } else {
       return m;
     }
   }
 
   /// 计算命宫
   GanZhi _calculateMingGong() {
-    // 算法来源 (问真/神峰通考)：
-    // 1. 月份以“过中气”为准 (即月将)
-    // 2. 寅上起正月，逆数至生月 (GongMonth)
-    // 3. 在该位起子时，顺数至生时 (Hour)
-    // 公式：
-    // Pos1 = 2(寅) - (GongMonth - 2) = 4 - GongMonth
-    // Final = Pos1 + Hour = 4 - GongMonth + Hour
-
-    final m = _getGongMonthIndex();
-    final h = bazi.time.zhi.index;
-
-    var branchIdxVal = 4 - m + h;
-
-    // 调整为有效范围 0-11
-    branchIdxVal %= 12;
-    if (branchIdxVal < 0) branchIdxVal += 12;
-
-    final branch = DiZhi.values[branchIdxVal];
-    final stem = _calculateStemForGong(branchIdxVal);
-
-    return GanZhi(stem, branch);
+    final fixedMonthIndex = (_getGongMonthIndex() - 2 + 12) % 12; // 寅月是正月！！
+    final hourIndex = bazi.time.zhi.index; // 子 = 0
+    final startIndex = 2; // 寅 = 2
+    final branchIndex = (startIndex + fixedMonthIndex - hourIndex + 12) % 12;
+    final stem = _calculateStemForGong(branchIndex);
+    return GanZhi(stem, DiZhi.values[branchIndex]);
   }
 
   /// 计算身宫
   GanZhi _calculateShenGong() {
-    // 算法来源 (问真)：
-    // 1. 月份以“过中气”为准
-    // 2. 寅上起正月，顺数至生月
-    // 3. 顺数至生时
-    // 公式：
-    // Pos1 = 2(寅) + (GongMonth - 2) = GongMonth
-    // Final = GongMonth + Hour
-    // (注意：这里的GongMonth和Hour都是0-based index)
-
-    final m = _getGongMonthIndex();
-    final h = bazi.time.zhi.index;
-
-    var branchIdxVal = m + h;
-
-    // 调整为有效范围 0-11
-    branchIdxVal %= 12;
-    if (branchIdxVal < 0) branchIdxVal += 12;
-
-    final branch = DiZhi.values[branchIdxVal];
-    final stem = _calculateStemForGong(branchIdxVal);
-
-    return GanZhi(stem, branch);
+    final fixedMonthIndex = (_getGongMonthIndex() - 2 + 12) % 12; // 寅月是正月！！
+    final hourIndex = bazi.time.zhi.index; // 子 = 0
+    final startIndex = 2; // 寅 = 2
+    final branchIndex = (startIndex + fixedMonthIndex + hourIndex + 12) % 12;
+    final stem = _calculateStemForGong(branchIndex);
+    return GanZhi(stem, DiZhi.values[branchIndex]);
   }
 
   /// 计算胎元
