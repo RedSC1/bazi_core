@@ -1,3 +1,10 @@
+## 0.4.4
+
+- **[新增]** 支持命宫、身宫、胎元、胎息（“附加柱”）参与刑冲克害计算与神煞分析。
+- **[配置化]** 引入 `ExtraPillarsConfig`，允许用户灵活控制哪些附加柱参与计算（默认关闭以保持原局纯净）。
+- **[导出增强]** 在 `bazi_core.dart` 中导出 `ExtraPillarsConfig` 和 `AstroDateTime`，简化外部调用。
+- **[修复]** 修正 `interaction_example.dart` 的测试代码告警。
+
 ## 0.4.3
 
 - **[新增]** 实现“人元司令” (Ren Yuan Si Ling) 计算逻辑，并集成至 `BaziChart.siLing`。
