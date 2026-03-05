@@ -2,20 +2,18 @@ import 'package:bazi_core/bazi_core.dart';
 import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
 
 void main() {
-  // 使用当前时间
-  final now = DateTime.now();
-  print('当前时间: $now');
+  // 使用固定时间进行回归测试 (2026-03-05 10:04)
+  const year = 2026;
+  const month = 3;
+  const day = 5;
+  const hour = 10;
+  const minute = 4;
+
+  print('测试时间: $year-$month-$day $hour:$minute');
   print('');
 
   // 创建 AstroDateTime
-  final astroTime = AstroDateTime(
-    now.year,
-    now.month,
-    now.day,
-    now.hour,
-    now.minute,
-    now.second,
-  );
+  final astroTime = AstroDateTime(year, month, day, hour, minute, 0);
 
   // 创建 TimePack
   final timePack = TimePack.createBySolarTime(clockTime: astroTime);
