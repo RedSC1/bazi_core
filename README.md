@@ -34,7 +34,7 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.4.3
+  bazi_core: ^0.4.4
   sxwnl_spa_dart: ^0.10.2 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
 ```
 
