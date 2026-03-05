@@ -2,6 +2,7 @@ import 'package:bazi_core/src/astronomy/time_adapter.dart';
 import 'package:bazi_core/src/models/bazi_table.dart';
 import 'package:bazi_core/src/models/enums.dart';
 import 'package:bazi_core/src/models/interaction_calculator.dart';
+import 'package:bazi_core/src/models/si_ling.dart';
 import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
 
 class BaziChart {
@@ -22,11 +23,25 @@ class BaziChart {
   /// 胎息
   late final GanZhi taiXi;
 
-  BaziChart(this.time, this.bazi, this.lunarDate, this.gender) {
+  /// 人元司令
+  late final SiLingResult? siLing;
+
+  BaziChart(
+    this.time,
+    this.bazi,
+    this.lunarDate,
+    this.gender, {
+    SiLingVersion siLingVersion = SiLingVersion.sanMingTongHui,
+  }) {
     mingGong = _calculateMingGong();
     shenGong = _calculateShenGong();
     taiYuan = _calculateTaiYuan();
     taiXi = _calculateTaiXi();
+    siLing = SiLing.calculate(
+      time.bjClt,
+      bazi.month.zhi,
+      version: siLingVersion,
+    );
   }
 
   //沟槽的ai幻觉，我改了一上午，就因为有个ai说这个玩意要看中气换月

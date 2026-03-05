@@ -20,3 +20,4 @@ export 'src/models/relationship.dart';
 export 'src/models/interaction_calculator.dart';
 export 'src/models/shen_sha.dart';
 export 'src/models/shen_sha_helper.dart';
+export 'src/models/si_ling.dart';
