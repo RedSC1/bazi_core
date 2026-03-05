@@ -29,35 +29,68 @@ class BaziChart {
     taiXi = _calculateTaiXi();
   }
 
-  /// 修正后的宫位计算用月份 (过中气算下个月)
-  // ai写的代码真不行，我重构了一下下面的命宫身宫算法的代码
-  int _getGongMonthIndex() {
-    // 1. 获取当前八字月支 (0-based)
-    final m = bazi.month.zhi.index;
-    var prevJieQi = getPrevJieQi(time.bjClt);
-    if (prevJieQi != null && isQi(prevJieQi.index)) {
-      return (m + 1) % 12;
-    } else {
-      return m;
-    }
-  }
+  //沟槽的ai幻觉，我改了一上午，就因为有个ai说这个玩意要看中气换月
+  //我也不知道这说法哪来的，反正我查了三命通会，没这说法，有知道的能说一下吗？？
+  //跟别的排盘软件对比了，反正他们应该都不是原文我贴下面了
+  /**
+ * 命宫推算逻辑 (原典出处)
+ * * [总则]
+ * 神无庙无所归，人无室无所栖，命无宫无所主，故有命宫之说。
+ * 不然，流年星辰为凶为吉，以何凭据？
+ * 此法看是何月生人，坐于何时，然后方定命坐何宫。
+ * * [步骤一：月将逆推] 
+ * 先将所生之月，从子上起：
+ * 正月亥上，二月戌三、酉四、申五、未六、午七、巳八、辰九、卯十、寅十一、丑十二，逆行十二位。
+ * (注：即以子位作为起点，逆时针数到出生之月，定位“月将”)
+ * * [步骤二：时辰顺推，逢卯安命]
+ * 次将所生之时，加于所生之月，顺行十二位，逢卯即安命宫。
+ * 经云：天轮转出地轮上，卯上分明是命宫是也。
+ * (注：将出生时辰的对应地支，放在上一步求出的“月将”位置上，顺时针数，数到地支“卯”所在的位置，该位置的静态地支即为命宫)
+ * * [案例推演]
+ * 假令甲子年三月生人，得戌时生：
+ * 1. 却将正月加子，二月在亥，三月在戌为止 (求月将：三月在戌)
+ * 2. 又将戌时加在戌上，亥上亥，子上子，丑上丑，寅上寅，卯上卯，逢卯便是，即命坐卯宫是也。(顺推求宫)
+ * * [步骤三：五虎遁起天干]
+ * 仍随甲子年起，亦如起月之法。
+ * 甲己之年丙作首，乃丁卯宫也。
+ * (注：以年干起五虎遁，推算命宫的天干)
+ * * [应用]
+ * 次看三方并本命流干犯何星凶吉推之。
+ */
 
   /// 计算命宫
+  /// 算法来源：《三命通会》
   GanZhi _calculateMingGong() {
-    final fixedMonthIndex = (_getGongMonthIndex() - 2 + 12) % 12; // 寅月是正月！！
-    final hourIndex = bazi.time.zhi.index; // 子 = 0
-    final startIndex = 2; // 寅 = 2
-    final branchIndex = (startIndex + fixedMonthIndex - hourIndex + 12) % 12;
+    final m = bazi.month.zhi.index; // 八字月支 (0-based)
+    final h = bazi.time.zhi.index; // 八字时支 (0-based)
+
+    // 月序号：寅=1(正月), 卯=2(二月) ... 丑=12(十二月)
+    final monthNum = (m - 2 + 12) % 12 + 1;
+
+    // 步骤一：从子上起正月，逆行至生月
+    // 正月在子(0)，二月在亥(11)，三月在戌(10)...
+    final monthPos = (0 - (monthNum - 1) + 12) % 12;
+
+    // 步骤二：将生时加于月将位，顺行至卯(3)，逢卯即安命宫
+    final branchIndex = (monthPos + (3 - h + 12) % 12) % 12;
+
+    // 步骤三：五虎遁起天干
     final stem = _calculateStemForGong(branchIndex);
     return GanZhi(stem, DiZhi.values[branchIndex]);
   }
 
   /// 计算身宫
+  // 这个公式我不知道是哪里来的。。反正跟别的八字软件一样。。
+  // 这个身宫目前我没有找到就讲这个的古书的原文
+  // 神奇小口诀
   GanZhi _calculateShenGong() {
-    final fixedMonthIndex = (_getGongMonthIndex() - 2 + 12) % 12; // 寅月是正月！！
-    final hourIndex = bazi.time.zhi.index; // 子 = 0
-    final startIndex = 2; // 寅 = 2
-    final branchIndex = (startIndex + fixedMonthIndex + hourIndex + 12) % 12;
+    final m = bazi.month.zhi.index; // 八字月支 (0-based)
+    final h = bazi.time.zhi.index; // 八字时支 (0-based)
+
+    // 身宫公式：(m + h + 1) % 12
+    final branchIndex = (m + h + 1) % 12;
+
+    // 五虎遁起天干
     final stem = _calculateStemForGong(branchIndex);
     return GanZhi(stem, DiZhi.values[branchIndex]);
   }
@@ -86,8 +119,8 @@ class BaziChart {
     final startStemIndex = (yearStemIndex % 5) * 2 + 2;
 
     // 寅的 index 是 2
-    // 偏移量 = 目标地支 - 寅
-    final offset = branchIndex - 2;
+    // 偏移量 = 目标地支 - 寅（必须顺推，用 mod 12 保证非负）
+    final offset = (branchIndex - 2 + 12) % 12;
 
     var stemIndex = (startStemIndex + offset) % 10;
     if (stemIndex < 0) stemIndex += 10;
