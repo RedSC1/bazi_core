@@ -1,5 +1,6 @@
 export 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart'
     show
+        AstroDateTime,
         GanZhi,
         TianGan,
         DiZhi,
@@ -21,3 +22,4 @@ export 'src/models/interaction_calculator.dart';
 export 'src/models/shen_sha.dart';
 export 'src/models/shen_sha_helper.dart';
 export 'src/models/si_ling.dart';
+export 'src/models/extra_pillars_config.dart';

@@ -3,6 +3,7 @@ import 'package:bazi_core/src/models/bazi_table.dart';
 import 'package:bazi_core/src/models/enums.dart';
 import 'package:bazi_core/src/models/interaction_calculator.dart';
 import 'package:bazi_core/src/models/si_ling.dart';
+import 'package:bazi_core/src/models/extra_pillars_config.dart';
 import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
 
 class BaziChart {
@@ -206,8 +207,10 @@ class BaziChart {
   }
 
   /// 获取八字原局内部的所有干支感应 (刑冲合害等)
-  List<InteractionResult> getAllInteractions() {
-    return getInteractionsWith();
+  List<InteractionResult> getAllInteractions({
+    ExtraPillarsConfig extraPillars = const ExtraPillarsConfig(),
+  }) {
+    return getInteractionsWith(extraPillars: extraPillars);
   }
 
   /// 获取八字原局与外部（如大运、流年）组合后的所有感应
@@ -216,6 +219,7 @@ class BaziChart {
   List<InteractionResult> getInteractionsWith({
     List<InteractionNode<TianGan>> otherStems = const [],
     List<InteractionNode<DiZhi>> otherBranches = const [],
+    ExtraPillarsConfig extraPillars = const ExtraPillarsConfig(),
   }) {
     // 1. 构建天干池 (原局四柱 + 外部传入)
     final List<InteractionNode<TianGan>> stemPool = [
@@ -226,6 +230,19 @@ class BaziChart {
       ...otherStems,
     ];
 
+    if (extraPillars.enableMingGong) {
+      stemPool.add(InteractionNode(PillarType.mingGong, mingGong.gan));
+    }
+    if (extraPillars.enableShenGong) {
+      stemPool.add(InteractionNode(PillarType.shenGong, shenGong.gan));
+    }
+    if (extraPillars.enableTaiYuan) {
+      stemPool.add(InteractionNode(PillarType.taiYuan, taiYuan.gan));
+    }
+    if (extraPillars.enableTaiXi) {
+      stemPool.add(InteractionNode(PillarType.taiXi, taiXi.gan));
+    }
+
     // 2. 构建地支池 (原局四柱 + 外部传入)
     final List<InteractionNode<DiZhi>> branchPool = [
       InteractionNode(PillarType.year, bazi.year.zhi),
@@ -234,6 +251,19 @@ class BaziChart {
       InteractionNode(PillarType.hour, bazi.time.zhi),
       ...otherBranches,
     ];
+
+    if (extraPillars.enableMingGong) {
+      branchPool.add(InteractionNode(PillarType.mingGong, mingGong.zhi));
+    }
+    if (extraPillars.enableShenGong) {
+      branchPool.add(InteractionNode(PillarType.shenGong, shenGong.zhi));
+    }
+    if (extraPillars.enableTaiYuan) {
+      branchPool.add(InteractionNode(PillarType.taiYuan, taiYuan.zhi));
+    }
+    if (extraPillars.enableTaiXi) {
+      branchPool.add(InteractionNode(PillarType.taiXi, taiXi.zhi));
+    }
 
     // 3. 执行计算
     final List<InteractionResult> results = [];
