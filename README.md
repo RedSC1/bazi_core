@@ -19,10 +19,11 @@
   - 自动计算天干地支相对于日主的十神关系（如正官、偏财等）。
   - 支持智能计算长生十二神起运。
   - 提供旬空（空亡）地支判定。
-- **🔮 岁运系统（大运/流年/流月）**
+- **🔮 岁运系统（大运/流年/流月/流日/流时）**
   - 精确推算起运交运时间。
   - 一键计算指定步数的大运、指定年龄的流年干支。
   - 支持基于“五虎遁”的流月干支自动推演。
+  - **完整流运表**: 提供 `FortuneTable` 类，生成大运→流年→节气月→流日的完整层级结构，支持快速检索。
 - **⚔️ 刑冲合害高级解析系统**
   - 全面涵盖原局及岁运互动中的 **15 种底层组合关系**：
     - **天干**: 五合、四冲。
@@ -36,8 +37,8 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.4.5
-  sxwnl_spa_dart: ^0.10.2 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
+  bazi_core: ^0.5.0
+  sxwnl_spa_dart: ^0.15.1 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
 ```
 
 然后执行命令获取包：
@@ -105,6 +106,51 @@ for (var fy in decade.flowYears) {
 }
 ```
 
+### 4. 生成完整流运表（大运→流年→流月→流日→流时）
+
+使用 `FortuneTable` 构建完整的岁运层级结构，支持按节气月划分流月，以及精细到时辰的流时：
+
+```dart
+// 建立岁运系统并生成流运表
+final fortune = Fortune.createByBaziChart(chart);
+
+// 可选：配置早晚子时（默认不分）
+final table = FortuneTable.build(
+  fortune,
+  decadeCount: 8,
+  splitByRatHour: false, // true=分早晚子时，23:00-24:00用次日日干
+);
+
+// 遍历所有大运
+for (final decade in table.decades) {
+  print('第${decade.index}步大运 ${decade.ganZhi}');
+
+  // 遍历该大运的10年流年
+  for (final year in decade.years) {
+    print('  ${year.year}年 ${year.ganZhi}');
+
+    // 遍历该年的12个节气月
+    for (final month in year.months) {
+      print('    ${month.ganZhi}月：${month.days.length}天');
+
+      // 遍历该月的流日
+      for (final day in month.days.take(3)) {
+        print('      ${day.date} ${day.ganZhi}');
+
+        // 获取当天12个流时（五鼠遁）
+        for (final hour in day.hours) {
+          print('        ${hour.name}时 ${hour.ganZhi}');
+        }
+      }
+    }
+  }
+}
+
+// 快速查找功能
+final targetYear = table.findYearByAge(25);  // 查找25岁那年
+final yearBySolar = table.findYearBySolarYear(2035);  // 查找2035年
+```
+
 ## 📖 API 核心类概览
 
 ### BaziChart (八字排盘主体)
@@ -129,8 +175,20 @@ for (var fy in decade.flowYears) {
   - 属性 `qiYunTime` 能够精准推算出交运起点的日期。
   - 函数 `getDecadeByIndex(index)` 提供按步数快速调取大运段的方法。
   - 函数 `getFlowYearByAge(age)` 支持输入实岁查询特定的流年数据。
+  - 函数 `getFlowMonths(year)` 支持获取指定年份的12个流月干支（基于五虎遁）。
 - **Decade (单步大运包装)**:
   - 内部属性包括当属大运的 `ganZhi`（天干地支），以及其所涵盖的十个年度包装对象 `flowYears`。
+
+### FortuneTable (完整流运表)
+
+- **层级结构**: `decades` → `years` → `months` → `days` → `hours`，完整呈现80年运势轨迹。
+- **节气月划分**: 流月严格按照节气划分（立春~惊蛰为正月等），符合命理传统。
+- **流时支持**: 每个流日包含 12 个时辰（五鼠遁），支持早晚子时配置。
+- **快速检索**:
+  - `findYearByAge(age)` - 根据虚岁快速定位流年。
+  - `findYearBySolarYear(year)` - 根据阳历年快速定位流年。
+- **早晚子时**: `splitByRatHour` 参数控制 23:00-24:00 的归属（默认不分，设为 true 则晚子时用次日日干）。
+- **使用场景**: 适合构建大运展开列表、流年流月日历视图、择日择时功能等复杂UI。
 
 ### 相关算法支持及互动判定枚举
 
