@@ -103,14 +103,20 @@ void main() {
     print('  │   时辰   │     时间       │    干支     │');
     print('  ├──────────┼────────────────┼─────────────┤');
     for (final h in testDay.hours) {
-      final timeStr = '${h.startTime.toTimeString().substring(0, 5)}-${h.endTime.toTimeString().substring(0, 5)}';
+      final timeStr =
+          '${h.startTime.toTimeString().substring(0, 5)}-${h.endTime.toTimeString().substring(0, 5)}';
       print('  │  ${h.name}时   │  $timeStr      │    ${h.ganZhi}    │');
     }
     print('  └──────────┴────────────────┴─────────────┘');
 
     // 分早晚子时
-    final tableSplit = FortuneTable.build(fortune, decadeCount: 1, splitByRatHour: true);
-    final splitDay = tableSplit.decades.first.years.first.months.first.days.first;
+    final tableSplit = FortuneTable.build(
+      fortune,
+      decadeCount: 1,
+      ratHourMode: RatHourMode.todayGan,
+    );
+    final splitDay =
+        tableSplit.decades.first.years.first.months.first.days.first;
     print('');
     print('  ┌─────────────────────────────────────────┐');
     print('  │  分早晚子时（13个时辰）                   │');
@@ -118,7 +124,8 @@ void main() {
     print('  │   时辰   │     时间       │    干支     │');
     print('  ├──────────┼────────────────┼─────────────┤');
     for (final h in splitDay.hours) {
-      final timeStr = '${h.startTime.toTimeString().substring(0, 5)}-${h.endTime.toTimeString().substring(0, 5)}';
+      final timeStr =
+          '${h.startTime.toTimeString().substring(0, 5)}-${h.endTime.toTimeString().substring(0, 5)}';
       final note = (h.startTime.hour == 23) ? '（晚子）' : '';
       print('  │  ${h.name}时   │  $timeStr      │    ${h.ganZhi}    $note│');
     }
@@ -126,7 +133,9 @@ void main() {
     print('');
     print('  说明：');
     print('    • 日干 ${testDay.ganZhi.gan.label} 起五鼠遁');
-    print('    • 次日干 ${dayGanZhi(testDay.date.add(Duration(days: 1))).gan.label} 起五鼠遁（晚子用）');
+    print(
+      '    • 次日干 ${dayGanZhi(testDay.date.add(Duration(days: 1))).gan.label} 起五鼠遁（晚子用）',
+    );
 
     // 起运前的小运（可选）
     print('\n【起运前小运（验证用）】');

@@ -148,7 +148,7 @@ class BaziChart {
     required AstroDateTime clockTime,
     Location location = defaultLoc,
     double timeZone = 8,
-    bool splitByRatHour = false, // 默认不分(即23点换日)，可配置
+    RatHourMode ratHourMode = RatHourMode.noSplit, // 默认不分(即23点换日)，可配置
     bool useTrueSolarTime = true, // 默认使用真太阳时
     Gender gender = Gender.male,
   }) {
@@ -156,13 +156,13 @@ class BaziChart {
       clockTime: clockTime,
       location: defaultLoc,
       timezone: timeZone,
-      splitByRatHour: splitByRatHour,
+      ratHourMode: ratHourMode,
       useTrueSolarTime: useTrueSolarTime,
     );
-    BaZi bz = TimeAdaptor.fromSolar(timepack, splitRatHour: splitByRatHour);
+    BaZi bz = TimeAdaptor.fromSolar(timepack);
     LunarDate ld = LunarDate.fromSolar(
       timepack.bjClt,
-      splitRatHour: splitByRatHour,
+      ratHourMode: ratHourMode,
     );
     return BaziChart(timepack, bz, ld, gender);
   }
@@ -176,7 +176,7 @@ class BaziChart {
     bool? isleap,
     Location location = defaultLoc,
     double timeZone = 8,
-    bool splitByRatHour = false, // 默认不分(即23点换日)，可配置
+    RatHourMode ratHourMode = RatHourMode.noSplit, // 默认不分(即23点换日)，可配置
     bool useTrueSolarTime = true, // 默认使用真太阳时
     Gender gender = Gender.male,
   }) {
@@ -199,10 +199,10 @@ class BaziChart {
       clockTime: clockTime,
       timezone: timeZone,
       location: location,
-      splitByRatHour: splitByRatHour,
+      ratHourMode: ratHourMode,
       useTrueSolarTime: useTrueSolarTime,
     );
-    final bz = TimeAdaptor.fromSolar(tp, splitRatHour: splitByRatHour);
+    final bz = TimeAdaptor.fromSolar(tp);
     return BaziChart(tp, bz, lunarDate, gender);
   }
 

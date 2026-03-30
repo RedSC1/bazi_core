@@ -9,7 +9,7 @@ void main() {
     final chart = BaziChart.createBySolarDate(
       clockTime: bt,
       gender: Gender.male,
-      splitByRatHour: false,
+      ratHourMode: RatHourMode.noSplit,
     );
 
     final fortune = Fortune.createByBaziChart(chart);

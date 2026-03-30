@@ -17,28 +17,43 @@ class TimeAdaptor {
     return BaZi(year: year, month: month, day: day, time: time);
   }
 
-  static BaZi fromSolar(TimePack time, {bool splitRatHour = false}) {
-    final rawBazi = calcGanZhi(
+  static BaZi fromSolar(TimePack time) {
+    final mode = time.ratHourMode;
+    // 1. 获取基础计算结果 (sxwnl 默认 23:00 换日)
+    final rawBaziResult = calcGanZhi(
       time.utcTime.toJ2000(),
       time.virtualTime.toJ2000(),
-    ); //默认不区分早晚子时的八字
-    GanZhiResult strBazi;
-    if (time.virtualTime.hour >= 23 && splitRatHour) {
-      //区分早晚子时单独处理，这里采用拼接的方式
-      final tbz = calcGanZhi(
-        time.utcTime.toJ2000() - 23 / 24,
-        time.virtualTime.toJ2000() - 23 / 24,
-      );
-      strBazi = GanZhiResult(
-        yearGanZhi: rawBazi.yearGanZhi,
-        monthGanZhi: rawBazi.monthGanZhi,
-        dayGanZhi: tbz.dayGanZhi,
-        timeGanZhi: tbz.timeGanZhi,
-        timeZhiIndex: tbz.timeZhiIndex,
-      );
-    } else {
-      strBazi = rawBazi;
+    );
+    
+    final bazi = strBz2Bz(rawBaziResult);
+
+    // 如果不是晚子时（23:00-00:00），或者选的是“不拆分”模式，直接返回原样
+    if (time.virtualTime.hour < 23 || mode == RatHourMode.noSplit) {
+      return bazi;
     }
-    return strBz2Bz(strBazi);
+
+    // --- 处理晚子时算当天 (00:00 换日) 的特殊逻辑 ---
+    
+    // 2. 还原日柱：利用你重载的 -1 运算符，强行回到今天
+    final todayDay = bazi.day - 1; 
+
+    // 3. 确定最终的时柱干支
+    GanZhi finalTimePillar;
+    if (mode == RatHourMode.todayGan) {
+      // 【模式：晚子用今天天干】
+      // 重新基于“今天日干”推算子时天干 (五鼠遁)
+      finalTimePillar = getDayHourGanZhi(todayDay.gan)[0]; 
+    } else {
+      // 【模式：晚子用明天天干】(主流)
+      // 保持 rawBazi 里的时干不变（因为它已经是明天的子时天干了），地支确保是子
+      finalTimePillar = GanZhi(bazi.time.gan, DiZhi.zi);
+    }
+
+    return BaZi(
+      year: bazi.year,
+      month: bazi.month,
+      day: todayDay, // 回归今天
+      time: finalTimePillar,
+    );
   }
 }
