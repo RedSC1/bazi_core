@@ -151,6 +151,7 @@ class BaziChart {
     RatHourMode ratHourMode = RatHourMode.noSplit, // 默认不分(即23点换日)，可配置
     bool useTrueSolarTime = true, // 默认使用真太阳时
     Gender gender = Gender.male,
+    SiLingVersion siLingVersion = SiLingVersion.sanMingTongHui,
   }) {
     TimePack timepack = TimePack.createBySolarTime(
       clockTime: clockTime,
@@ -164,7 +165,7 @@ class BaziChart {
       timepack.bjClt,
       ratHourMode: ratHourMode,
     );
-    return BaziChart(timepack, bz, ld, gender);
+    return BaziChart(timepack, bz, ld, gender, siLingVersion: siLingVersion);
   }
   factory BaziChart.createByLunarDate({
     required int year,
@@ -179,6 +180,7 @@ class BaziChart {
     RatHourMode ratHourMode = RatHourMode.noSplit, // 默认不分(即23点换日)，可配置
     bool useTrueSolarTime = true, // 默认使用真太阳时
     Gender gender = Gender.male,
+    SiLingVersion siLingVersion = SiLingVersion.sanMingTongHui,
   }) {
     final lunarDate = LunarDate.fromString(
       year,
@@ -203,7 +205,7 @@ class BaziChart {
       useTrueSolarTime: useTrueSolarTime,
     );
     final bz = TimeAdaptor.fromSolar(tp);
-    return BaziChart(tp, bz, lunarDate, gender);
+    return BaziChart(tp, bz, lunarDate, gender, siLingVersion: siLingVersion);
   }
 
   /// 获取八字原局内部的所有干支感应 (刑冲合害等)
