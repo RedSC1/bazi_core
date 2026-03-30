@@ -101,6 +101,7 @@ class FlowMonth {
   final GanZhi ganZhi;
   final AstroDateTime startTime;
   final AstroDateTime endTime;
+  final String jieName;
   final RatHourMode ratHourMode;
 
   List<FlowDay>? _days;
@@ -109,6 +110,7 @@ class FlowMonth {
     required this.ganZhi,
     required this.startTime,
     required this.endTime,
+    required this.jieName,
     this.ratHourMode = RatHourMode.noSplit,
   });
 
@@ -254,6 +256,7 @@ class FortuneTable {
           ganZhi: monthGanZhi[i],
           startTime: jieBoundaries[i].dateTime,
           endTime: jieBoundaries[i + 1].dateTime,
+          jieName: jieBoundaries[i].name,
           ratHourMode: mode,
         ),
       );
