@@ -56,12 +56,20 @@ class FlowDay {
         endHour = startHour + 2;
       }
 
-      result.add(FlowHour(
-        hourIndex: i,
-        ganZhi: hourGanZhiList[i],
-        startTime: AstroDateTime(date.year, date.month, date.day, startHour, 0),
-        endTime: AstroDateTime(date.year, date.month, date.day, endHour, 0),
-      ));
+      result.add(
+        FlowHour(
+          hourIndex: i,
+          ganZhi: hourGanZhiList[i],
+          startTime: AstroDateTime(
+            date.year,
+            date.month,
+            date.day,
+            startHour,
+            0,
+          ),
+          endTime: AstroDateTime(date.year, date.month, date.day, endHour, 0),
+        ),
+      );
     }
 
     if (isSplitting) {
@@ -74,12 +82,14 @@ class FlowDay {
         lateZiGanZhi = hourGanZhiList[0];
       }
 
-      result.add(FlowHour(
-        hourIndex: 0,
-        ganZhi: lateZiGanZhi,
-        startTime: AstroDateTime(date.year, date.month, date.day, 23, 0),
-        endTime: AstroDateTime(date.year, date.month, date.day, 23, 59),
-      ));
+      result.add(
+        FlowHour(
+          hourIndex: 0,
+          ganZhi: lateZiGanZhi,
+          startTime: AstroDateTime(date.year, date.month, date.day, 23, 0),
+          endTime: AstroDateTime(date.year, date.month, date.day, 23, 59),
+        ),
+      );
     }
 
     return result;
@@ -109,17 +119,19 @@ class FlowMonth {
 
   List<FlowDay> _buildDays() {
     final result = <FlowDay>[];
-    final daysDiff = endTime.difference(startTime).inDays;
 
-    for (int i = 0; i < daysDiff; i++) {
-      final currentDate = startTime.add(Duration(days: i));
-      final gz = dayGanZhi(currentDate);
+    // 🚀 使用“+0.5取整”法，将开始和结束时刻转化为绝对天数索引
+    // JD 的 0.5 偏移是为了对齐历法天（从午夜开始算）
+    int startDayIdx = (startTime.toJulianDay() + 0.5).floor();
+    int endDayIdx = (endTime.toJulianDay() + 0.5).floor();
 
-      result.add(FlowDay(
-        date: AstroDateTime(currentDate.year, currentDate.month, currentDate.day),
-        ganZhi: gz,
-        ratHourMode: ratHourMode,
-      ));
+    // 使用整数循环，确保每一天只属于一个月份 (左闭右开区间)
+    // 这样“交节”那一天会自动归入新的一月
+    for (int i = startDayIdx; i < endDayIdx; i++) {
+      final dt = AstroDateTime.fromJulianDay(i.toDouble());
+      final gz = dayGanZhi(dt);
+
+      result.add(FlowDay(date: dt, ganZhi: gz, ratHourMode: ratHourMode));
     }
     return result;
   }
@@ -162,8 +174,9 @@ class FlowDecade {
 /// 岁运流转表
 class FortuneTable {
   final List<FlowDecade> decades;
+  final Fortune fortune;
 
-  const FortuneTable._(this.decades);
+  const FortuneTable._(this.decades, this.fortune);
 
   factory FortuneTable.build(
     Fortune fortune, {
@@ -172,50 +185,90 @@ class FortuneTable {
   }) {
     final result = <FlowDecade>[];
 
+    // 1. 处理起运前的小运阶段
+    final firstD = fortune.getDecadeByIndex(1);
+    if (firstD.startAge > 1) {
+      final years = <FlowYear>[];
+      for (int age = 1; age < firstD.startAge; age++) {
+        final targetYear = fortune.birthday.year + age - 1;
+        final months = _buildFlowMonths(targetYear, fortune, ratHourMode);
+
+        years.add(
+          FlowYear(
+            year: targetYear,
+            ganZhi: yearGanZhi(targetYear),
+            months: months,
+          ),
+        );
+      }
+
+      result.add(
+        FlowDecade(
+          index: 0,
+          ganZhi: fortune.xiaoYunBase, // 小运的基准（时柱），主要起兜底站位作用
+          startAge: 1,
+          endAge: firstD.startAge - 1,
+          startTime: fortune.birthday,
+          endTime: firstD.startTime,
+          years: years,
+        ),
+      );
+    }
+
+    // 2. 处理大运阶段
     for (int i = 1; i <= decadeCount; i++) {
       final d = fortune.getDecadeByIndex(i);
       final years = d.flowYears.map((yi) {
         final months = _buildFlowMonths(yi.year, fortune, ratHourMode);
-        return FlowYear(
-          year: yi.year,
-          ganZhi: yi.ganZhi,
-          months: months,
-        );
+        return FlowYear(year: yi.year, ganZhi: yi.ganZhi, months: months);
       }).toList();
 
-      result.add(FlowDecade(
-        index: d.index,
-        ganZhi: d.ganZhi,
-        startAge: d.startAge,
-        endAge: d.endAge,
-        startTime: d.startTime,
-        endTime: d.endTime,
-        years: years,
-      ));
+      result.add(
+        FlowDecade(
+          index: d.index,
+          ganZhi: d.ganZhi,
+          startAge: d.startAge,
+          endAge: d.endAge,
+          startTime: d.startTime,
+          endTime: d.endTime,
+          years: years,
+        ),
+      );
     }
 
-    return FortuneTable._(result);
+    return FortuneTable._(result, fortune);
   }
 
-  static List<FlowMonth> _buildFlowMonths(int year, Fortune fortune, RatHourMode mode) {
+  static List<FlowMonth> _buildFlowMonths(
+    int year,
+    Fortune fortune,
+    RatHourMode mode,
+  ) {
     final jieBoundaries = _getJieBoundaries(year);
     final monthGanZhi = fortune.getFlowMonths(year);
     final months = <FlowMonth>[];
 
     for (int i = 0; i < 12 && i < jieBoundaries.length - 1; i++) {
-      months.add(FlowMonth(
-        ganZhi: monthGanZhi[i],
-        startTime: jieBoundaries[i].dateTime,
-        endTime: jieBoundaries[i + 1].dateTime,
-        ratHourMode: mode,
-      ));
+      months.add(
+        FlowMonth(
+          ganZhi: monthGanZhi[i],
+          startTime: jieBoundaries[i].dateTime,
+          endTime: jieBoundaries[i + 1].dateTime,
+          ratHourMode: mode,
+        ),
+      );
     }
     return months;
   }
 
   static List<JieQiResult> _getJieBoundaries(int year) {
     final liChunJd = getSpecificJieQi(year, 21);
-    var current = JieQiResult(index: 2, name: '立春', jd: liChunJd, dateTime: AstroDateTime.fromJ2000(liChunJd));
+    var current = JieQiResult(
+      index: 2,
+      name: '立春',
+      jd: liChunJd,
+      dateTime: AstroDateTime.fromJ2000(liChunJd),
+    );
     final result = <JieQiResult>[current];
     for (int i = 0; i < 12; i++) {
       final next = getNextJie(current.dateTime);

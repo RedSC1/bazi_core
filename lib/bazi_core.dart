@@ -25,3 +25,4 @@ export 'src/models/shen_sha_helper.dart';
 export 'src/models/si_ling.dart';
 export 'src/models/extra_pillars_config.dart';
 export 'src/models/fortune_table.dart';
+export 'src/models/nayin_helper.dart';
