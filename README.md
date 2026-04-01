@@ -37,8 +37,8 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.5.0
-  sxwnl_spa_dart: ^0.15.1 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
+  bazi_core: ^0.6.0
+  sxwnl_spa_dart: ^0.16.0 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
 ```
 
 然后执行命令获取包：
@@ -240,3 +240,11 @@ print('流年神煞: ${info.liuNianShenSha}');
 ## 📄 许可证
 
 本项目开源发布基于 [MIT License](LICENSE) 许可证发布。
+
+---
+
+### 🎨 推荐实现 (Reference Implementation)
+
+基于本库构建的紫微斗数/八字排盘 UI 实现：
+
+*   **[OpenDestiny](https://github.com/RedSC1/opendestiny-flutter)** - 开源易学排盘工具（Flutter 全平台）。

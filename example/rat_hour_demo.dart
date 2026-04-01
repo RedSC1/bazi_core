@@ -31,7 +31,7 @@ void main() {
 
   print('');
 
-  // 3. 晚子算当天 + 明天天干 (主流派/问真)
+  // 3. 晚子算当天 + 明天天干 (主流派)
   final tp3 = TimePack.createBySolarTime(
     clockTime: testTime,
     ratHourMode: RatHourMode.tomorrowGan,

@@ -155,7 +155,7 @@ class BaziChart {
   }) {
     TimePack timepack = TimePack.createBySolarTime(
       clockTime: clockTime,
-      location: defaultLoc,
+      location: location,
       timezone: timeZone,
       ratHourMode: ratHourMode,
       useTrueSolarTime: useTrueSolarTime,

@@ -1,3 +1,9 @@
+## 0.6.0
+
+- **[依赖升级]** 升级 `sxwnl_spa_dart` 至 `^0.16.0`，对齐 OpenDestiny 0.1.0 发布。
+- **[工程化]** 切换 `sxwnl_spa_dart` 依赖从本地路径 (`path`) 改为 pub.dev 云端版本，正式支持独立发布。
+- **[元数据]** 完善 `pubspec.yaml`：新增 `repository`、`issue_tracker`、`topics` 以提升 pub.dev 评分与可发现性。
+
 ## 0.5.0
 
 - **[新增] 完整流运表 (FortuneTable)**: 新增 `FortuneTable` 类，提供大运 → 流年 → 流月 → 流日 → **流时**的完整层级结构。
