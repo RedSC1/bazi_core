@@ -37,8 +37,8 @@
 
 ```yaml
 dependencies:
-  bazi_core: ^0.6.1
-  sxwnl_spa_dart: ^0.17.0 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
+  bazi_core: ^0.6.2
+  sxwnl_spa_dart: ^0.18.0 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
 ```
 
 然后执行命令获取包：
