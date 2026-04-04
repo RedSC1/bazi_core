@@ -1,3 +1,8 @@
+## 0.6.3
+
+- **[依赖升级]** 升级 `sxwnl_spa_dart` 至 `^0.18.1`。
+- **[兼容修复]** 对齐 `sxwnl_spa_dart` 中 `LunarDate` 的天文纪年重大修复与历史纪年辅助 API。
+
 ## 0.6.2
 
 - **[依赖升级]** 升级 `sxwnl_spa_dart` 至 `^0.18.0`，适配天文纪年 breaking change。
