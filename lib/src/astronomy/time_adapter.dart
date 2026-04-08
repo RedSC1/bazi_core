@@ -20,10 +20,7 @@ class TimeAdaptor {
   static BaZi fromSolar(TimePack time) {
     final mode = time.ratHourMode;
     // 1. 获取基础计算结果 (sxwnl 默认 23:00 换日)
-    final rawBaziResult = calcGanZhi(
-      time.utcTime.toJ2000(),
-      time.virtualTime.toJ2000(),
-    );
+    final rawBaziResult = calcGanZhiAstroDate(time.utcTime, time.virtualTime);
     
     final bazi = strBz2Bz(rawBaziResult);
 

@@ -1,3 +1,7 @@
+## 0.6.7
+
+- **[修复]** 切换 `TimeAdaptor.fromSolar` 至 `sxwnl_spa_dart` 新增的 `calcGanZhiAstroDate` 接口，修复 `13:00:00` 等整点因 JD 浮点精度漂移导致时辰判定偏差（午时→未时）的问题。
+
 ## 0.6.6
 
 - **[新增]** 新增八字反查核心接口 `BaziReverseLookup`，支持按年柱/月柱/日柱反查日期候选。

@@ -1,5 +1,4 @@
 import 'package:bazi_core/bazi_core.dart';
-import 'package:bazi_core/src/astronomy/fortune.dart';
 import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
 import 'package:test/test.dart';
 
@@ -49,5 +48,15 @@ void main() {
 
     final gz4 = GanZhi(TianGan.yi, DiZhi.chou);
     expect(gz4.getKongWang(), equals([DiZhi.hai, DiZhi.xu]));
+  });
+
+  test('exact 13:00:00 enters Wei hour when using clock time', () {
+    final chart = BaziChart.createBySolarDate(
+      clockTime: AstroDateTime(2026, 2, 18, 13, 0, 0),
+      useTrueSolarTime: false,
+      ratHourMode: RatHourMode.noSplit,
+    );
+
+    expect(chart.bazi.time.zhi, DiZhi.wei);
   });
 }
