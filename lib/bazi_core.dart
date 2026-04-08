@@ -15,6 +15,7 @@ export 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart'
         getDayHourGanZhi;
 export 'src/astronomy/time_adapter.dart';
 export 'src/astronomy/fortune.dart';
+export 'src/astronomy/bazi_reverse_lookup.dart';
 export 'src/models/bazi_chart.dart';
 export 'src/models/enums.dart';
 export 'src/models/bazi_table.dart';
