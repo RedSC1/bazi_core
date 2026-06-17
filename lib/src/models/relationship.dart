@@ -1,10 +1,11 @@
 import 'package:bazi_core/bazi_core.dart';
 
 class Relationship {
+  /// 获取天干相对于日主的十神关系
   static ShiShen getShiShen(TianGan dayMaster, TianGan targetGan) {
     int self = dayMaster.index;
     int target = targetGan.index;
-    return ShiShen.values[((((self >>> 1) - (target >>> 1) + 5) % 5) << 1) |
+    return ShiShen.values[((((target >>> 1) - (self >>> 1) + 5) % 5) << 1) |
         ((self ^ target) & 1)];
   }
 
