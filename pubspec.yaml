@@ -1,20 +1,13 @@
 name: bazi_core
-description: "Dart/Flutter 八字（BaZi）计算库，支持真太阳时、早晚子时配置、农历/阳历转换等功能。"
-version: 0.6.7
-homepage: https://github.com/RedSC1/bazi_core
+version: 0.7.0-dev.1
+description: Pure Dart BaZi charts and fortune calculations backed by ephemeris_lite.
 repository: https://github.com/RedSC1/bazi_core
-issue_tracker: https://github.com/RedSC1/bazi_core/issues
-topics:
-  - bazi
-  - chinese-astrology
-  - fortune-telling
-  - calendar
-
+publish_to: none
 environment:
-  sdk: ^3.10.8
-
+  sdk: ^3.10.0
 dependencies:
-  sxwnl_spa_dart: ^0.18.5
+  ephemeris_lite:
+    path: ../ephemeris_lite
 dev_dependencies:
-  test: ^1.29.0
-  lints: ^6.1.0
+  lints: ^6.0.0
+  test: ^1.25.6

@@ -1,250 +1,141 @@
 # bazi_core
 
-[![Pub Version](https://img.shields.io/pub/v/bazi_core)](https://pub.dev/packages/bazi_core)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+基于 `ephemeris_lite` 的纯 Dart 八字库，由本项目的 `bazi-lite` 移植。
+支持四柱、十神、藏干、长生、纳音、神煞、刑冲合害、起运与运表，以及出生日期和时辰反查。
 
-一个功能强大的 Dart/Flutter 八字（四柱）命理计算核心库。
+> 当前为 `0.7.0-dev.1` 重写分支，尚未发布。API 与旧版不兼容；旧主分支及 Git 历史保留。
+> 不再依赖 `sxwnl_spa_dart`，也不使用 FFI。底层暂通过同级目录引用 `ephemeris_lite`。
 
-> 📖 **[开发者笔记 (Developer's Note)](https://github.com/RedSC1/ziwei_core/blob/main/developer's_note.md)**：为什么写这个库？它的架构设计思路是什么？以及作者对玄学的一点“理智”思考。
+## 开发依赖
 
-本项目旨在提供一套标准、精准的八字基础排盘与分析引擎，支持真太阳时、早晚子时配置、农历/阳历互相转换、十神计算、长生十二神状态获取，以及完善的干支刑冲合害（15种复杂关系）自动判定系统。
+将 `bazi_core-next` 与 `ephemeris_lite` 放在同一父目录，然后在本包运行：
 
-## ✨ 核心特性
-
-- **🕒 基础排盘与历法**
-  - 精准转换公历（阳历）与农历。
-  - 支持真太阳时计算，包含经度时差调整。
-  - 支持灵活配置早子时与晚子时。
-- **☯️ 十神与神煞**
-  - 自动计算天干地支相对于日主的十神关系（如正官、偏财等）。
-  - 支持智能计算长生十二神起运。
-  - 提供旬空（空亡）地支判定。
-- **🔮 岁运系统（大运/流年/流月/流日/流时）**
-  - 精确推算起运交运时间。
-  - 一键计算指定步数的大运、指定年龄的流年干支。
-  - 支持基于“五虎遁”的流月干支自动推演。
-  - **完整流运表**: 提供 `FortuneTable` 类，生成大运→流年→节气月→流日的完整层级结构，支持快速检索。
-- **⚔️ 刑冲合害高级解析系统**
-  - 全面涵盖原局及岁运互动中的 **15 种底层组合关系**：
-    - **天干**: 五合、四冲。
-    - **地支**: 六合、三合局、半合、拱合、三会局、六冲、六害、六破、相绝、暗合。
-    - **相刑**: 三刑全、相刑、自刑。
-  - 内置高级命理算法：精准处理“争合”、“多冲一”及“大局压制小局”等专业分析逻辑。
-
-## 📦 安装
-
-在你的项目 `pubspec.yaml` 中添加以下依赖：
-
-```yaml
-dependencies:
-  bazi_core: ^0.6.7
-  sxwnl_spa_dart: ^0.18.5 # 由于底层时间与历法依赖于该核心库，通常需要一并引入
-```
-
-然后执行命令获取包：
-```bash
-flutter pub get
-# 或是纯 Dart 项目：
+```sh
 dart pub get
+dart analyze
+dart test
+dart run example/bazi_core_example.dart
 ```
 
-## 🚀 快速开始
-
-### 1. 创建基础八字排盘
-
-使用公历时间进行排盘并打印出四柱：
-
-```dart
-import 'package:bazi_core/bazi_core.dart';
-import 'package:sxwnl_spa_dart/sxwnl_spa_dart.dart';
-
-void main() {
-  // 定义排盘起止时间点：2026年2月18日 12:00
-  final solarTime = AstroDateTime(2026, 2, 18, 12, 0);
-  
-  // 创建八字盘实例
-  final chart = BaziChart.createBySolarDate(clockTime: solarTime);
-  
-  // 打印具体的四柱八字组合
-  print('八字: ${chart.bazi}'); // 输出结构示例：丙午 庚寅 癸酉 戊午
-}
-```
-
-### 2. 解析干支互动关系（刑冲合害）
-
-通过引擎自动解析八字原局内部存在的所有复杂互动关系。
-
-```dart
-// 获取原局内部所有刑冲合害集合
-final results = chart.getAllInteractions();
-
-for (var res in results) {
-  // 打印每个关系的类型及其作用的位置
-  // 例如日志可能会输出: [branchCombination] 参与柱: [Month, Day]
-  print('[${res.type}] 参与柱: ${res.nodes}');
-}
-```
-
-### 3. 推演岁运轨迹（大运与流年）
-
-利用八字盘生成对应的岁运大运系统，轻松查询关键年份信息：
-
-```dart
-// 建立全局岁运系统
-final fortune = Fortune.createByBaziChart(chart);
-
-print('起运年龄: ${fortune.startAge} 岁');
-print('精准交运时间: ${fortune.qiYunTime}');
-
-// 获取第 1 步大运（通常索引 0 表示原局，索引 1 为第一步运），包含它辖下的10个流年
-final decade = fortune.getDecadeByIndex(1);
-print('第一步大运干支: ${decade.ganZhi}');
-
-// 遍历输出该大运包含的流年轨迹
-for (var fy in decade.flowYears) {
-  print('年份: ${fy.year}，干支: ${fy.ganZhi}');
-}
-```
-
-### 4. 生成完整流运表（大运→流年→流月→流日→流时）
-
-使用 `FortuneTable` 构建完整的岁运层级结构，支持按节气月划分流月，以及精细到时辰的流时：
-
-```dart
-// 建立岁运系统并生成流运表
-final fortune = Fortune.createByBaziChart(chart);
-
-// 可选：配置早晚子时（默认不分）
-final table = FortuneTable.build(
-  fortune,
-  decadeCount: 8,
-  splitByRatHour: false, // true=分早晚子时，23:00-24:00用次日日干
-);
-
-// 遍历所有大运
-for (final decade in table.decades) {
-  print('第${decade.index}步大运 ${decade.ganZhi}');
-
-  // 遍历该大运的10年流年
-  for (final year in decade.years) {
-    print('  ${year.year}年 ${year.ganZhi}');
-
-    // 遍历该年的12个节气月
-    for (final month in year.months) {
-      print('    ${month.ganZhi}月：${month.days.length}天');
-
-      // 遍历该月的流日
-      for (final day in month.days.take(3)) {
-        print('      ${day.date} ${day.ganZhi}');
-
-        // 获取当天12个流时（五鼠遁）
-        for (final hour in day.hours) {
-          print('        ${hour.name}时 ${hour.ganZhi}');
-        }
-      }
-    }
-  }
-}
-
-// 快速查找功能
-final targetYear = table.findYearByAge(25);  // 查找25岁那年
-final yearBySolar = table.findYearBySolarYear(2035);  // 查找2035年
-```
-
-## 📖 API 核心类概览
-
-### BaziChart (八字排盘主体)
-
-| 核心方法 / 属性 | 类型 | 说明 |
-|------|------|------|
-| `BaziChart.createBySolarDate` | `factory` | 通过公历构建八字盘，支持传递经度和进行早晚子时逻辑调整。 |
-| `BaziChart.createByLunarDate` | `factory` | 通过农历构建八字基础盘。 |
-| `getAllInteractions` | `Method` | 解析并返回八字原局内自有的刑冲合害组列表。 |
-| `getInteractionsWith` | `Method` | 以原局作为基础，加入外部元素（如大运/流年），生成全套干支互动关系。 |
-| `bazi` | `BaZi` | 返回核心 `BaZi` 对象，即包裹了年、月、日、时四柱结构。 |
-| `lunarDate` | `LunarDate`| 解析此八字对应的底层精准农历日期数据。 |
-
-### BaZi & GanZhi (核心数据层)
-
-- **BaZi (四柱)**: 分别包裹 `year`, `month`, `day`, `time` 四个独立节点。
-- **GanZhi (干支)**: 涵盖 `gan` (天干) 和 `zhi` (地支)；内置了方便的算数符（比如 `+` 运算符）解决简单的六十甲子顺逆推演。
-
-### Fortune & Decade (大运岁运引擎)
-
-- **Fortune (岁运总控制)**:
-  - 属性 `qiYunTime` 能够精准推算出交运起点的日期。
-  - 函数 `getDecadeByIndex(index)` 提供按步数快速调取大运段的方法。
-  - 函数 `getFlowYearByAge(age)` 支持输入实岁查询特定的流年数据。
-  - 函数 `getFlowMonths(year)` 支持获取指定年份的12个流月干支（基于五虎遁）。
-- **Decade (单步大运包装)**:
-  - 内部属性包括当属大运的 `ganZhi`（天干地支），以及其所涵盖的十个年度包装对象 `flowYears`。
-
-### FortuneTable (完整流运表)
-
-- **层级结构**: `decades` → `years` → `months` → `days` → `hours`，完整呈现80年运势轨迹。
-- **节气月划分**: 流月严格按照节气划分（立春~惊蛰为正月等），符合命理传统。
-- **流时支持**: 每个流日包含 12 个时辰（五鼠遁），支持早晚子时配置。
-- **快速检索**:
-  - `findYearByAge(age)` - 根据虚岁快速定位流年。
-  - `findYearBySolarYear(year)` - 根据阳历年快速定位流年。
-- **早晚子时**: `splitByRatHour` 参数控制 23:00-24:00 的归属（默认不分，设为 true 则晚子时用次日日干）。
-- **使用场景**: 适合构建大运展开列表、流年流月日历视图、择日择时功能等复杂UI。
-
-### 相关算法支持及互动判定枚举
-
-覆盖判定: `stemCombination` (五合), `stemClash` (四冲), `branchTripleCombination` (三合全), `branchHalfCombination` (半合局), `branchArchingCombination` (拱合), `branchTripleDirection` (三会), `branchClash` (六冲), `branchCombination` (六合), `branchHarm` (六害), `branchDestruction` (相破), `branchTriplePunishment` (三刑全), `branchPunishment` (相刑), `branchSelfPunishment` (自刑), `branchHiddenCombination` (暗合), `branchSeverance` (相绝)。
-
-## 🧪 实验性功能：神煞分析
-
-> ⚠️ **注意**：本功能代码由 AI 辅助录入，目前包含多种常见神煞（如天乙贵人、驿马、桃花、魁罡等）。
-> 虽然经过初步测试，但尚未进行大规模人工校验，可能存在遗漏或判定偏差。请谨慎用于生产环境，并欢迎提交 PR 修正。
-
-### 功能特点
-- **全盘扫描**：支持原局四柱（年/月/日/时）的神煞检测。
-- **岁运集成**：支持大运、流年、流月、流日、流时的神煞分析。
-- **复杂规则**：涵盖整柱匹配（如魁罡）、干查支（如天乙）、支查支（如桃花）、季节/纳音相关（如天赦、月德）等多种规则。
-
-### 使用示例
+## 排盘
 
 ```dart
 import 'package:bazi_core/bazi_core.dart';
 
-// 1. 创建八字排盘
-final chart = BaziChart.createBySolarDate(
-  clockTime: AstroDateTime(2024, 1, 1, 12, 0, 0),
+final chart = BaziChart.fromZonedTime(
+  ZonedTime(
+    year: 2000, month: 1, day: 1, hour: 12,
+    offsetMinutes: 480,
+  ),
+  options: BaziOptions(
+    gender: Gender.male,
+    ratHourMode: RatHourMode.nextDay,
+  ),
 );
 
-// 2. 准备岁运干支 (可选)
-final daYun = GanZhi.fromName('庚辰');
-final liuNian = GanZhi.fromName('辛巳');
-
-// 3. 执行分析
-final info = ShenShaHelper.analyze(
-  chart,
-  daYun: daYun,
-  liuNian: liuNian,
-  // 也可以传入流月/流日/流时
-);
-
-// 4. 查看结果
-print('年柱神煞: ${info.yearShenSha}');
-print('日柱神煞: ${info.dayShenSha}');
-print('流年神煞: ${info.liuNianShenSha}');
+final columns = chart.columns;
+final qiYun = chart.getQiYun();
+final decades = chart.getDaYunTable();
+final shenSha = chart.getShenSha();
+final relations = collectChartRelations(chart);
+final json = chart.toJson();
 ```
 
-## 🤝 参与贡献
+不提供性别时仍可排盘，性别相关的神煞不启用；起运/大运方法会明确报错，
+JSON 中的 `fortune` 为 `null`。
 
-欢迎大家提交 Issue 和 Pull Request 来帮助扩展和健壮它！
-如果您是对八字排盘底层算法或命理交互逻辑有研究的专家，也极其期待能与您进行深入交流。
+### 历法、精度与太阳时
 
-## 📄 许可证
+```dart
+final options = BaziOptions(
+  calendarOptions: CalendarOptions(
+    mode: CalendarMode.historical,
+    eventAccuracy: Accuracy.mid,
+    utcOffsetMinutes: 480,
+  ),
+  pillarHistoricalMode: PillarHistoricalMode.followCalendar,
+  clockMode: BaziClockMode.trueSolar,
+  longitudeDeg: 116.4074,
+  gender: Gender.female,
+);
+```
 
-本项目开源发布基于 [MIT License](LICENSE) 许可证发布。
+- `calendarOptions.eventAccuracy` 控制定气定朔算法档位，默认 `mid`，可选 `fast`、`accurate`。
+- `pillarHistoricalMode` 控制年、月柱是否采用历史节气日；与天文计算精度独立。
+- `clockMode` 可选民用钟表时间、平太阳时、真太阳时。太阳时需要提供经度。
+- `ZonedTime.offsetMinutes` 表示输入钟表的时区；`calendarOptions` 表示历法设置，两者独立。
+- `fromInstant(jdUT1, virtualTime)` 接受物理时刻和已处理的计算钟表，不会再次转换太阳时。
+- 年份采用天文编号，`0` 为公元前 1 年；使用 1582 年切换的儒略／格里高利混合历。
 
----
+### 子时规则
 
-### 🎨 推荐实现 (Reference Implementation)
+| Dart | 行为 |
+| --- | --- |
+| `RatHourMode.nextDay` | 23:00 换日，时干跟随次日；即旧 `noSplit` |
+| `RatHourMode.currentDay` | 00:00 换日，晚子时使用当日日干 |
+| `RatHourMode.currentDayTomorrowStem` | 00:00 换日，晚子时时干借用次日日干 |
 
-基于本库构建的紫微斗数/八字排盘 UI 实现：
+### 已知四柱的规则分析
 
-*   **[OpenDestiny](https://github.com/RedSC1/opendestiny-flutter)** - 开源易学排盘工具（Flutter 全平台）。
+```dart
+final analysis = analyzePillars(FourPillars(
+  year: makeGanzhi(2, 6), month: makeGanzhi(6, 2),
+  day: makeGanzhi(4, 2), hour: makeGanzhi(3, 5),
+));
+final extras = analysis.extraPillars;
+final flags = collectTargetShenSha(
+  analysis, analysis.pillars.day, ShenShaTarget.day,
+  gender: Gender.male,
+);
+final names = shenShaNames(flags);
+final hasGuiRen = hasShenSha(flags, ShenShaId.tianYiGuiRen);
+```
+
+四柱用 `int` 保存：高四位为天干，低四位为地支。`makeGanzhi` 拒绝不存在的干支配对。
+`analyzePillars` 不虚构生日或起运时刻；神煞位集使用 `BigInt`，包括超过 64 位的标识。
+
+### 起运和运表
+
+- `QiYunTimeModel`：传统历年/月日换算、儒略年换算、回归年换算。
+- `DaYunBoundaryModel`：民用历年、儒略年、回归年边界。
+- 起运节气间隔使用**天文交节时刻**，与历史年/月柱的节气日划分分别处理，保持 JS 行为。
+- `generateDaYunPillars`、`generateXiaoYun` 是无需天文时刻的规则接口。
+- `calculateFlowYear/Month/Day/Hour` 生成流运干支。
+- `getRenyuanSilingSegments`、`selectRenyuanSiling` 提供两套人元司令表。
+
+### 反查
+
+```dart
+final matches = reverseLookupBazi(
+  year: chart.pillars.year,
+  month: chart.pillars.month,
+  day: chart.pillars.day,
+  hour: chart.pillars.hour,
+  startDate: const CalendarDate(year: 1990, month: 1, day: 1),
+  endDate: const CalendarDate(year: 2010, month: 12, day: 31),
+  options: chart.options,
+);
+```
+
+也可分两步调用 `searchBaziDates(BaziDateSearchQuery(...))` 和
+`searchBaziTimesForDate(candidate, hour: ...)`。日期范围包含首尾日；
+时辰结果的 `startTime`／`endTime` 为包含端点的范围，搜索分辨率为一秒。
+交节日保留交节前后分段，历史边界复用底层四柱的统一接口。
+
+## 测试与迁移
+
+见 [迁移说明](doc/migration.md)。测试包括共享 C++ 夹具、JS 直接对拍、旧版回归案例，
+以及 Dart 编译到 JavaScript 后的冒烟测试。
+
+```sh
+dart compile js tool/web_smoke.dart -o /tmp/bazi-web-smoke.js
+node /tmp/bazi-web-smoke.js
+```
+
+规则属于传统民俗资料，结果不构成现实决策建议。
+
+## 许可
+
+新实现移植自本项目 MPL-2.0 的 `bazi-lite`，采用 MPL-2.0，见 [LICENSE](LICENSE)。
+旧版 MIT 实现的许可保留在其 Git 历史中；依赖来源见
+[第三方说明](THIRD_PARTY_NOTICES.zh-CN.md)。

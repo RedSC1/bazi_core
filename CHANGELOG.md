@@ -1,3 +1,12 @@
+## 0.7.0-dev.1（未发布）
+
+- 基于 `bazi-lite` 重写为纯 Dart 实现，底层改用独立 `ephemeris_lite`。
+- 移植四柱规则、66 种神煞、关系汇总、起运/运表、人元司令及分步/完整反查。
+- 增加逐盘不可变选项、物理时刻与计算钟表分离、JSON 输出和 Dart-to-JS 验证。
+- 迁入共享 C++ 夹具、JS 直接对拍与旧 Dart 回归案例；新 API 不兼容旧展示层和可变注册表。
+- 新实现使用源 `bazi-lite` 的 MPL-2.0；旧 MIT 实现保留在此前版本历史中。
+- 保持 `publish_to: none` 和本地底层依赖，本次不发布。
+
 ## 0.6.7
 
 - **[修复]** 切换 `TimeAdaptor.fromSolar` 至 `sxwnl_spa_dart` 新增的 `calcGanZhiAstroDate` 接口，修复 `13:00:00` 等整点因 JD 浮点精度漂移导致时辰判定偏差（午时→未时）的问题。
