@@ -12,6 +12,14 @@ class BaziColumn extends DecodedPillar {
       hiddenTenGods = List.unmodifiable(
         getHiddenStems(ganzhiBranch(value)).map((s) => getTenGod(dayMaster, s)),
       );
+  BaziColumn._snapshot(BaziColumn source)
+    : key = source.key,
+      visibleTenGod = source.visibleTenGod,
+      lifeStage = source.lifeStage,
+      nayinId = source.nayinId,
+      hiddenStems = List.unmodifiable(source.hiddenStems),
+      hiddenTenGods = List.unmodifiable(source.hiddenTenGods),
+      super(source.value);
   @override
   Map<String, Object> toJson() => {
     ...super.toJson(),

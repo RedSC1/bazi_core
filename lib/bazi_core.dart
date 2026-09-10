@@ -28,4 +28,4 @@ part 'src/fortune.dart';
 part 'src/relations.dart';
 part 'src/reverse_lookup.dart';
 part 'src/api.dart';
-part 'src/shen_sha_registry.dart';
+part 'src/shen_sha_catalog.dart';

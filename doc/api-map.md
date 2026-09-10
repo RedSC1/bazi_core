@@ -28,7 +28,7 @@
 | `searchBaziTimesForDate({dateCandidate, hour})` | `searchBaziTimesForDate(candidate, hour: ...)` |
 | `reverseLookupBazi` / `BaziFullSearchQuery` | 函数同名，查询字段改为命名参数 |
 | 图表列、起运结果、大小运、人元司令和反查结果类型 | 对应同名 Dart 类；`BaziColumnKey` 的四个 key 仍为字符串 |
-| `ShenShaRegistry` / `ShenShaRuleSet` / `BoundShenSha` | 同名；回调为 `bool Function(ShenShaContext)` |
+| `BaziShenShaModule` / `BaziShenShaCatalog` / `BaziShenShaContext` | 同名；回调为 `bool Function(BaziShenShaInput)` |
 
 ## 常量与类型
 
@@ -52,3 +52,5 @@ Dart 的历法设置集中在 `CalendarOptions`，而 JS 在 `BaziOptionsInput` 
 JSON 仍接受/输出扁平字段。Dart 额外保留底层 `eventAccuracy`；读取没有该字段的 JS 选项时默认 `mid`。
 
 本表不承诺旧 Dart 0.6 展示层类的兼容，详见 `migration.md`。
+
+`BaziShenShaSelection` 在 JS 为 options interface，在 Dart 为不可变类；匹配项两边均为 `BaziShenShaMatch`。
