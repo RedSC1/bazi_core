@@ -12,6 +12,49 @@ BigInt sha(String month, String day, String hour) => collectTargetShenSha(
   gender: Gender.male,
 );
 void main() {
+  test(
+    'genderless rules retain Jin-Shen, Tong-Zi, San-Qi and Gong matches',
+    () {
+      final cases = [
+        (25, '甲子', '甲寅', '甲子', '癸酉', ShenShaTarget.hour),
+        (31, '甲子', '甲寅', '甲子', '癸酉', ShenShaTarget.day),
+        (33, '甲子', '戊辰', '庚午', '甲子', ShenShaTarget.day),
+        (34, '乙丑', '丙寅', '丁卯', '甲子', ShenShaTarget.day),
+        (35, '壬子', '癸丑', '辛卯', '甲子', ShenShaTarget.day),
+        (48, '甲子', '甲寅', '癸亥', '癸丑', ShenShaTarget.day),
+        (49, '甲子', '甲寅', '甲申', '甲戌', ShenShaTarget.day),
+      ];
+      final dependentMask = [
+        18,
+        19,
+        20,
+        45,
+      ].fold(BigInt.zero, (mask, id) => mask | (BigInt.one << id));
+      for (final (id, year, month, day, hour, kind) in cases) {
+        final chart = analyzePillars(
+          FourPillars(
+            year: gz(year),
+            month: gz(month),
+            day: gz(day),
+            hour: gz(hour),
+          ),
+        );
+        final target = kind == ShenShaTarget.hour
+            ? chart.pillars.hour
+            : chart.pillars.day;
+        final bits = collectTargetShenSha(chart, target, kind);
+        expect(hasShenSha(bits, id), isTrue, reason: 'missing $id');
+        expect(bits & dependentMask, BigInt.zero);
+        for (final gender in Gender.values) {
+          expect(
+            bits,
+            collectTargetShenSha(chart, target, kind, gender: gender) &
+                ~dependentMask,
+          );
+        }
+      }
+    },
+  );
   test('legacy seasonal Di-Zhuan and Tian-Zhuan cases', () {
     for (final (month, day) in [
       ('丙寅', '辛卯'),

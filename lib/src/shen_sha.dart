@@ -697,80 +697,78 @@ BigInt collectTargetShenSha(
       set(19);
     }
     if (targetBranch == (yearBranch + (forward ? 7 : 5)) % 12) set(20);
-    final hourStem = ganzhiStem(hour);
-    final hourBranch = ganzhiBranch(hour);
-    final yearNayin = getNayinElement(year).index;
-    if (targetKind == ShenShaTarget.hour &&
-        (dayStem == 0 || dayStem == 5) &&
-        ((targetStem == 9 && targetBranch == 9) ||
-            (targetStem == 5 && targetBranch == 5) ||
-            (targetStem == 1 && targetBranch == 1))) {
-      set(25);
+  }
+  final hourStem = ganzhiStem(hour);
+  final hourBranch = ganzhiBranch(hour);
+  final ruleYearNayin = getNayinElement(year).index;
+  if (targetKind == ShenShaTarget.hour &&
+      (dayStem == 0 || dayStem == 5) &&
+      ((targetStem == 9 && targetBranch == 9) ||
+          (targetStem == 5 && targetBranch == 5) ||
+          (targetStem == 1 && targetBranch == 1))) {
+    set(25);
+  }
+  if ((targetKind == ShenShaTarget.day || targetKind == ShenShaTarget.hour) &&
+      (((season == 0 || season == 2) &&
+              (targetBranch == 2 || targetBranch == 0)) ||
+          ((season == 1 || season == 3) &&
+              (targetBranch == 3 || targetBranch == 7 || targetBranch == 4)) ||
+          ((ruleYearNayin == 2 || ruleYearNayin == 1) &&
+              (targetBranch == 6 || targetBranch == 3)) ||
+          ((ruleYearNayin == 0 || ruleYearNayin == 4) &&
+              (targetBranch == 9 || targetBranch == 10)) ||
+          (ruleYearNayin == 3 && (targetBranch == 4 || targetBranch == 5)))) {
+    set(31);
+  }
+  if (targetKind == ShenShaTarget.day) {
+    final stems = [yearStem, ganzhiStem(month), dayStem, hourStem];
+    if ([0, 4, 6].every((stem) => stems.contains(stem))) set(33);
+    if ([1, 2, 3].every((stem) => stems.contains(stem))) set(34);
+    if ([8, 9, 7].every((stem) => stems.contains(stem))) set(35);
+  }
+  if (ruleYearNayin != 1 && ruleYearNayin != 2) {
+    final counterpart = targetBranch == 10
+        ? 11
+        : targetBranch == 11
+        ? 10
+        : targetBranch == 4
+        ? 5
+        : targetBranch == 5
+        ? 4
+        : -1;
+    final hasCounterpart = [
+      yearBranch,
+      monthBranch,
+      dayBranch,
+      hourBranch,
+    ].contains(counterpart);
+    if (((targetBranch == 10 || targetBranch == 11) &&
+            ruleYearNayin == 4 &&
+            gender == Gender.male &&
+            hasCounterpart) ||
+        ((targetBranch == 4 || targetBranch == 5) &&
+            (ruleYearNayin == 0 || ruleYearNayin == 3) &&
+            gender == Gender.female &&
+            hasCounterpart)) {
+      set(45);
     }
-    if ((targetKind == ShenShaTarget.day || targetKind == ShenShaTarget.hour) &&
-        (((season == 0 || season == 2) &&
-                (targetBranch == 2 || targetBranch == 0)) ||
-            ((season == 1 || season == 3) &&
-                (targetBranch == 3 ||
-                    targetBranch == 7 ||
-                    targetBranch == 4)) ||
-            ((yearNayin == 2 || yearNayin == 1) &&
-                (targetBranch == 6 || targetBranch == 3)) ||
-            ((yearNayin == 0 || yearNayin == 4) &&
-                (targetBranch == 9 || targetBranch == 10)) ||
-            (yearNayin == 3 && (targetBranch == 4 || targetBranch == 5)))) {
-      set(31);
+  }
+  if (targetKind == ShenShaTarget.day &&
+      dayStem == hourStem &&
+      dayBranch != hourBranch) {
+    if ((dayStem == 9 && _unorderedPair(dayBranch, hourBranch, 11, 1)) ||
+        (dayStem == 3 && _unorderedPair(dayBranch, hourBranch, 5, 7)) ||
+        (dayStem == 5 && _unorderedPair(dayBranch, hourBranch, 7, 5)) ||
+        (dayStem == 4 && _unorderedPair(dayBranch, hourBranch, 4, 6))) {
+      set(48);
     }
-    if (targetKind == ShenShaTarget.day) {
-      final stems = [yearStem, ganzhiStem(month), dayStem, hourStem];
-      if ([0, 4, 6].every((stem) => stems.contains(stem))) set(33);
-      if ([1, 2, 3].every((stem) => stems.contains(stem))) set(34);
-      if ([8, 9, 7].every((stem) => stems.contains(stem))) set(35);
-    }
-    if (yearNayin != 1 && yearNayin != 2) {
-      final counterpart = targetBranch == 10
-          ? 11
-          : targetBranch == 11
-          ? 10
-          : targetBranch == 4
-          ? 5
-          : targetBranch == 5
-          ? 4
-          : -1;
-      final hasCounterpart = [
-        yearBranch,
-        monthBranch,
-        dayBranch,
-        hourBranch,
-      ].contains(counterpart);
-      if (((targetBranch == 10 || targetBranch == 11) &&
-              yearNayin == 4 &&
-              gender == Gender.male &&
-              hasCounterpart) ||
-          ((targetBranch == 4 || targetBranch == 5) &&
-              (yearNayin == 0 || yearNayin == 3) &&
-              gender == Gender.female &&
-              hasCounterpart)) {
-        set(45);
-      }
-    }
-    if (targetKind == ShenShaTarget.day &&
-        dayStem == hourStem &&
-        dayBranch != hourBranch) {
-      if ((dayStem == 9 && _unorderedPair(dayBranch, hourBranch, 11, 1)) ||
-          (dayStem == 3 && _unorderedPair(dayBranch, hourBranch, 5, 7)) ||
-          (dayStem == 5 && _unorderedPair(dayBranch, hourBranch, 7, 5)) ||
-          (dayStem == 4 && _unorderedPair(dayBranch, hourBranch, 4, 6))) {
-        set(48);
-      }
-      if ((dayStem == 0 &&
-              (_unorderedPair(dayBranch, hourBranch, 8, 10) ||
-                  _unorderedPair(dayBranch, hourBranch, 2, 0))) ||
-          (dayStem == 1 && _unorderedPair(dayBranch, hourBranch, 7, 9)) ||
-          (dayStem == 4 && _unorderedPair(dayBranch, hourBranch, 8, 6)) ||
-          (dayStem == 7 && _unorderedPair(dayBranch, hourBranch, 1, 3))) {
-        set(49);
-      }
+    if ((dayStem == 0 &&
+            (_unorderedPair(dayBranch, hourBranch, 8, 10) ||
+                _unorderedPair(dayBranch, hourBranch, 2, 0))) ||
+        (dayStem == 1 && _unorderedPair(dayBranch, hourBranch, 7, 9)) ||
+        (dayStem == 4 && _unorderedPair(dayBranch, hourBranch, 8, 6)) ||
+        (dayStem == 7 && _unorderedPair(dayBranch, hourBranch, 1, 3))) {
+      set(49);
     }
   }
 
