@@ -27,3 +27,5 @@ part 'src/shen_sha.dart';
 part 'src/fortune.dart';
 part 'src/relations.dart';
 part 'src/reverse_lookup.dart';
+part 'src/api.dart';
+part 'src/shen_sha_registry.dart';

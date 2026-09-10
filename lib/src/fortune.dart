@@ -189,14 +189,14 @@ class QiYunResult {
 
 /// Astronomical Jie interval; civil/solar clock is supplied independently.
 QiYunResult calculateQiYun(
-  double jd,
+  Object instant,
   CalendarDate birthCivilTime,
   BaziPillarAnalysis chart,
   Gender gender, {
   CalendarOptions? calendarOptions,
   QiYunTimeModel timeModel = QiYunTimeModel.traditionalCalendar,
 }) {
-  if (!jd.isFinite) throw ArgumentError.value(jd, 'jd');
+  final jd = asUt1JulianDay(instant);
   _validCivil(birthCivilTime);
   final direction = calculateLuckDirection(chart.pillars.year, gender);
   var term = getPreviousJie(jd, options: calendarOptions);

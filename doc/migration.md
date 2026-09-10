@@ -11,12 +11,12 @@
 | `AstroDateTime`／`TimePack` | `ZonedTime`、`JulianTime`、独立 `CalendarDate` 计算钟表 |
 | `BaZi`／`GanZhi` | `FourPillars`／经过校验的 packed `int` |
 | `Fortune.createByBaziChart` | `chart.getQiYun()`、`chart.getDaYunTable()` |
-| 自定义神煞类 | 默认 66 种稳定 ID、`collectTargetShenSha`；旧可变注册表不保留 |
+| 自定义神煞类 | 默认 66 种稳定 ID、`collectTargetShenSha`；自定义规则改用实例级 `ShenShaRegistry` |
 | `chart.taiXi` 等 | `chart.extraPillars.taiXi` 等 |
 | `noSplit`／`todayGan`／`tomorrowGan` | `nextDay`／`currentDay`／`currentDayTomorrowStem` |
 | 旧反查类 | `searchBaziDates`、`searchBaziTimesForDate`、`reverseLookupBazi` |
 
-这是 API 重写，不承诺旧源码直接编译。旧表格展示类、可变规则对象和仅用于打印调试的
+这是 API 重写，不承诺旧源码直接编译。旧表格展示类、全局可变规则列表和仅用于打印调试的
 演示脚本不作为兼容层保留。需要农历信息时，直接调用独立 `ephemeris_lite`，
 不在八字图表上隐含另一套历法状态。
 
@@ -44,3 +44,5 @@ node tool/generate_js_oracle.mjs ../taiyin-lite
 
 当前仅供开发，`publish_to: none`，底层使用本地 path 依赖。发布前仍需审查公开 API、
 迁移文档并将底层依赖换为已发布版本；本次不发布到 pub.dev。
+
+完整公开接口对应见 [api-map.md](api-map.md)；新注册表扩展见 [shen-sha-registry.md](shen-sha-registry.md)。

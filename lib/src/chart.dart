@@ -73,10 +73,11 @@ class BaziChart extends BaziPillarAnalysis {
     this.birthClockTime,
   ) : super._(a.pillars, a.extraPillars, a.dayMaster, a.columns);
   factory BaziChart.fromInstant(
-    double jdUT1,
+    Object instant,
     CalendarDate virtualTime, {
     BaziOptions? options,
   }) {
+    final jdUT1 = asUt1JulianDay(instant);
     final o = options ?? BaziOptions();
     final pillars = calculateFourPillars(
       jdUT1,
@@ -197,9 +198,9 @@ class BaziChart extends BaziPillarAnalysis {
 }
 
 BaziChart calculateBazi(
-  double jdUT1,
+  Object instant,
   CalendarDate virtualTime, {
   BaziOptions? options,
-}) => BaziChart.fromInstant(jdUT1, virtualTime, options: options);
+}) => BaziChart.fromInstant(instant, virtualTime, options: options);
 BaziChart baziForZonedTime(ZonedTime time, {BaziOptions? options}) =>
     BaziChart.fromZonedTime(time, options: options);

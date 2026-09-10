@@ -139,3 +139,8 @@ node /tmp/bazi-web-smoke.js
 新实现移植自本项目 MPL-2.0 的 `bazi-lite`，采用 MPL-2.0，见 [LICENSE](LICENSE)。
 旧版 MIT 实现的许可保留在其 Git 历史中；依赖来源见
 [第三方说明](THIRD_PARTY_NOTICES.zh-CN.md)。
+
+## 扩展规则与完整接口表
+
+[公开 API 对应表](doc/api-map.md) 列出 JS 导出项在 Dart 中的接口、命名参数和常量对应。
+[神煞注册表](doc/shen-sha-registry.md) 支持实例级新增、替换、删除及快照绑定；旧的全局列表不恢复。
