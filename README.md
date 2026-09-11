@@ -1,5 +1,7 @@
 # bazi_core
 
+[English](./README_EN.md)
+
 基于 `ephemeris_lite` 的纯 Dart 八字库，由本项目的 `bazi-lite` 移植。
 支持四柱、十神、藏干、长生、纳音、神煞、刑冲合害、起运与运表，以及出生日期和时辰反查。
 
@@ -10,13 +12,13 @@
 
 排盘所用民用日期范围跟随内核，为天文纪年 −6000～10000 年；年 `0` 表示公元前 1 年。该范围表示接口可计算的目标区间，不代表所有年代具有相同精度；历史历法和 ΔT 的限制以 `ephemeris_lite` 文档为准。
 
-当前稳定版本：`1.0.0`。
+当前稳定版本：`1.1.0`。
 
 ## 安装
 
 ```yaml
 dependencies:
-  bazi_core: ^1.0.0
+  bazi_core: ^1.1.0
 ```
 
 运行 `dart pub get`，Flutter 项目使用 `flutter pub get`。
@@ -44,6 +46,13 @@ final chart = BaziChart.fromZonedTime(
     gender: Gender.male,
     ratHourMode: RatHourMode.nextDay,
   ),
+);
+
+final lunarChart = BaziChart.fromLunarDay(
+  const LunarDate(year: 2003, month: 2, day: 11),
+  hour: 14,
+  minute: 15,
+  options: chart.options,
 );
 
 final columns = chart.columns;
@@ -78,8 +87,14 @@ final options = BaziOptions(
 - `clockMode` 可选民用钟表时间、平太阳时、真太阳时。太阳时需要提供经度。
 - `clockMode` 默认 `BaziClockMode.civil`；旧版 `TimePack`／`createBySolarDate` 默认启用真太阳时，迁移旧调用时应显式选择 `BaziClockMode.trueSolar` 并填写经度。
 - `ZonedTime.offsetMinutes` 表示输入钟表的时区；`calendarOptions` 表示历法设置，两者独立。
-- `fromInstant(jdUT1, virtualTime)` 接受物理时刻和已处理的计算钟表，不会再次转换太阳时。
+- `fromInstant(jdUT1, chartTime)` 接受物理时刻和已处理的计算钟表，不会再次转换太阳时。
+- `fromSolarDay`／`fromLunarDay` 的日期只表示一天，`hour` 必须单独提供；农历转换与排盘共用 `calendarOptions`。
 - 年份采用天文编号，`0` 为公元前 1 年；使用 1582 年切换的儒略／格里高利混合历。
+
+`birthClockTime` 保存原始输入钟表，`birthJdUT1` 保存物理瞬间，
+`birthChartTime` 保存排盘实际采用的民用／平太阳／真太阳钟面。旧名
+`birthCivilTime` 暂作兼容别名。命盘上的起运和大运方法会复用建盘时的设置；底层
+函数允许为研究比较另传设置，但在交节、换日或历史边界混用口径可能与原盘不一致。
 
 ### 子时规则
 

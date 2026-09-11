@@ -1,3 +1,10 @@
+## 1.1.0
+
+- 增加 `BaziChart.fromSolarDay()` 与 `BaziChart.fromLunarDay()`，日期与出生时辰分别传入；农历转换和排盘共用同一组历法及时区选项。
+- 以 `birthChartTime`／`birth.chartTime` 作为排盘钟面时间的正式名称；旧 `birthCivilTime`／`virtualTime` 保留为弃用兼容入口。
+- 补充中英文 README、时间模型、构造方式及历法设置一致性说明。
+- 将 `ephemeris_lite` 依赖升级至 `^1.1.0`。
+
 ## 1.0.0
 
 - 首个重写后的稳定版本；公共 API 与 `1.0.0-beta.1` 保持一致。

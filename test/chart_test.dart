@@ -62,11 +62,13 @@ void main() {
         );
         final j = jsonDecode(jsonEncode(c));
         expect(j['birth']['clockTime'], time.toJson());
-        expect(j['birth']['virtualTime'], c.birthCivilTime.toJson());
+        expect(j['birth']['chartTime'], c.birthChartTime.toJson());
+        expect(j['birth']['virtualTime'], c.birthChartTime.toJson());
+        expect(c.birthCivilTime.toJson(), c.birthChartTime.toJson());
         expect(j['options']['utcOffsetMinutes'], 480);
         expect(j['birth']['gender'], 'female');
         if (mode != BaziClockMode.civil) {
-          expect(c.birthCivilTime.day, isNot(time.day));
+          expect(c.birthChartTime.day, isNot(time.day));
         }
       }
       final c = BaziChart.fromInstant(time.toJulianTime().jdUT1, time);
@@ -75,6 +77,25 @@ void main() {
       expect(() => c.getQiYun(), throwsStateError);
     },
   );
+  test('solar and lunar day constructors require an explicit birth hour', () {
+    final options = BaziOptions(
+      calendarOptions: CalendarOptions(utcOffsetMinutes: 480),
+    );
+    final solar = BaziChart.fromSolarDay(
+      const CalendarDate(year: 2003, month: 3, day: 13),
+      hour: 9,
+      minute: 30,
+      options: options,
+    );
+    final lunar = BaziChart.fromLunarDay(
+      const LunarDate(year: 2003, month: 2, day: 11),
+      hour: 9,
+      minute: 30,
+      options: options,
+    );
+    expect(lunar.pillars.toJson(), solar.pillars.toJson());
+    expect(lunar.options, same(options));
+  });
   test('66-bit Shen-Sha representation is lossless', () {
     final bits = (BigInt.one << 65) | (BigInt.one << 64) | BigInt.one;
     expect(shenShaIds(bits), [0, 64, 65]);

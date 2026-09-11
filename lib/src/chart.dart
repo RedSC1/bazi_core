@@ -72,24 +72,26 @@ class BaziChart extends BaziPillarAnalysis {
   final BaziOptions options;
   final double birthJdUT1;
   final ZonedTime? birthClockTime;
-  final CalendarDate birthCivilTime;
+  final CalendarDate birthChartTime;
+  @Deprecated('Use birthChartTime.')
+  CalendarDate get birthCivilTime => birthChartTime;
   BaziChart._(
     BaziPillarAnalysis a,
     this.options,
     this.birthJdUT1,
-    this.birthCivilTime,
+    this.birthChartTime,
     this.birthClockTime,
   ) : super._(a.pillars, a.extraPillars, a.dayMaster, a.columns);
   factory BaziChart.fromInstant(
     Object instant,
-    CalendarDate virtualTime, {
+    CalendarDate chartTime, {
     BaziOptions? options,
   }) {
     final jdUT1 = asUt1JulianDay(instant);
     final o = options ?? BaziOptions();
     final pillars = calculateFourPillars(
       jdUT1,
-      virtualTime,
+      chartTime,
       options: o.calendarOptions,
       ratHourMode: o.ratHourMode,
       pillarHistoricalMode: o.pillarHistoricalMode,
@@ -98,7 +100,7 @@ class BaziChart extends BaziPillarAnalysis {
       analyzePillars(pillars, earthPalaceMode: o.earthPalaceMode),
       o,
       jdUT1,
-      normalizeChartVirtualTime(virtualTime),
+      normalizeChartVirtualTime(chartTime),
       null,
     );
   }
@@ -110,14 +112,52 @@ class BaziChart extends BaziPillarAnalysis {
       BaziClockMode.trueSolar => trueSolarTime(time, o.longitudeDeg!),
     };
     final c = BaziChart.fromInstant(time.toJulianTime().jdUT1, v, options: o);
-    return BaziChart._(c, o, c.birthJdUT1, c.birthCivilTime, time);
+    return BaziChart._(c, o, c.birthJdUT1, c.birthChartTime, time);
+  }
+  factory BaziChart.fromSolarDay(
+    CalendarDate solarDay, {
+    required int hour,
+    int minute = 0,
+    double second = 0,
+    BaziOptions? options,
+  }) {
+    final o = options ?? BaziOptions();
+    return BaziChart.fromZonedTime(
+      ZonedTime(
+        year: solarDay.year,
+        month: solarDay.month,
+        day: solarDay.day,
+        hour: hour,
+        minute: minute,
+        second: second,
+        offsetMinutes: o.utcOffsetMinutes,
+      ),
+      options: o,
+    );
+  }
+  factory BaziChart.fromLunarDay(
+    LunarDate lunarDay, {
+    required int hour,
+    int minute = 0,
+    double second = 0,
+    BaziOptions? options,
+  }) {
+    final o = options ?? BaziOptions();
+    final solarDay = lunarToSolar(lunarDay, options: o.calendarOptions);
+    return BaziChart.fromSolarDay(
+      solarDay,
+      hour: hour,
+      minute: minute,
+      second: second,
+      options: o,
+    );
   }
   QiYunResult getQiYun() {
     final gender = options.gender;
     if (gender == null) throw StateError('Qi-Yun requires gender');
     return calculateQiYun(
       birthJdUT1,
-      birthCivilTime,
+      birthChartTime,
       this,
       gender,
       calendarOptions: options.calendarOptions,
@@ -126,7 +166,7 @@ class BaziChart extends BaziPillarAnalysis {
   }
 
   List<DaYunEntry> getDaYunTable() => generateDaYun(
-    birthCivilTime,
+    birthChartTime,
     this,
     getQiYun(),
     count: options.daYunCount,
@@ -151,7 +191,8 @@ class BaziChart extends BaziPillarAnalysis {
         'yearNumbering': 'astronomical',
         'jdUT1': birthJdUT1,
         'clockTime': birthClockTime?.toJson(),
-        'virtualTime': birthCivilTime.toJson(),
+        'chartTime': birthChartTime.toJson(),
+        'virtualTime': birthChartTime.toJson(),
         'clockMode': options.toJson()['clockMode'],
         'longitudeDeg': options.longitudeDeg,
         'gender': options.gender?.name,
@@ -187,7 +228,7 @@ class BaziChart extends BaziPillarAnalysis {
               'qiYun': qi.toJson(),
               'decades':
                   generateDaYun(
-                        birthCivilTime,
+                        birthChartTime,
                         this,
                         qi,
                         count: options.daYunCount,
@@ -207,8 +248,8 @@ class BaziChart extends BaziPillarAnalysis {
 
 BaziChart calculateBazi(
   Object instant,
-  CalendarDate virtualTime, {
+  CalendarDate chartTime, {
   BaziOptions? options,
-}) => BaziChart.fromInstant(instant, virtualTime, options: options);
+}) => BaziChart.fromInstant(instant, chartTime, options: options);
 BaziChart baziForZonedTime(ZonedTime time, {BaziOptions? options}) =>
     BaziChart.fromZonedTime(time, options: options);

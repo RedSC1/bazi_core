@@ -28,10 +28,10 @@
 | `TimePack` 字段／参数 | 新版 |
 | --- | --- |
 | `clockTime`、`timezone` | `ZonedTime`；时区改用整数分钟 `offsetMinutes` |
-| `utcTime` | `clock.toJulianTime().toZonedTime(0)` |
-| `bjClt` | `clock.toJulianTime().toZonedTime(480)` |
+| `utcTime` | `clock.toUtc()` |
+| `bjClt` | `clock.toZonedTime(480)` |
 | `solarTime.trueSolarTime` | `trueSolarTime(clock, longitudeDeg)` |
-| `virtualTime` | `chart.birthCivilTime`，或先自行计算后传给 `BaziChart.fromInstant` |
+| `virtualTime` | `chart.birthChartTime`，或先自行计算后传给 `BaziChart.fromInstant` |
 | `location` | 排盘太阳时只需要 `BaziOptions.longitudeDeg`；纬度不参与该换算 |
 | `ratHourMode` | `BaziOptions.ratHourMode` |
 
@@ -77,7 +77,7 @@ final apparentSolarClock = trueSolarTime(clock, 116.4074);
 
 新版默认 `BaziClockMode.civil`，不会像旧入口那样在未声明时自动套用东经 120°的真太阳时。
 若应用已经分别保存物理瞬间和修正后的排盘钟表，可用
-`BaziChart.fromInstant(instant, virtualTime)`，此入口不会再次进行太阳时修正。
+`BaziChart.fromInstant(instant, chartTime)`，此入口不会再次进行太阳时修正。
 
 ## 测试迁移依据
 

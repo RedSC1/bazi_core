@@ -9,6 +9,7 @@ export 'package:ephemeris_lite/ephemeris_lite.dart'
         CalendarMode,
         CalendarDayBoundaryMode,
         CalendarDate,
+        LunarDate,
         ZonedTime,
         JulianTime,
         SolarClock,

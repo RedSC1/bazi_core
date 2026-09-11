@@ -263,7 +263,7 @@ _TimeState? _timeState(BaziDateCandidate c, double jd) {
       late =
           c.options.ratHourMode != RatHourMode.nextDay &&
           hour == 0 &&
-          chart.birthCivilTime.hour >= 23;
+          chart.birthChartTime.hour >= 23;
   return _TimeState(chart, hour, late);
 }
 

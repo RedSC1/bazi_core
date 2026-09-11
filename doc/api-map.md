@@ -6,6 +6,8 @@
 | --- | --- |
 | `BaziChart.fromInstant` / `calculateBazi` | 同名，支持数值 UT1 JD 或 `JulianTime` |
 | `BaziChart.fromZonedTime` / `baziForZonedTime` | 同名，`options:` 命名参数 |
+| `BaziChart.fromSolarDay/fromLunarDay` | 日期与必填 `hour` 分开；时区和历法取 `BaziOptions` |
+| `birthChartTime` / `birthCivilTime` | 同名；`birthCivilTime` 为弃用兼容别名 |
 | `analyzePillars` | 同名，`earthPalaceMode:` 命名参数 |
 | `BaziOptions` / `resolveBaziOptions` | 同名；构造器命名参数或 `BaziOptions.fromJson` |
 | `BaziOptions.with` | `copyWith`；可用 `clearGender` / `clearLongitude` 显式清空可选字段 |
@@ -49,7 +51,7 @@
 | TS 的 ID 数值联合类型和参数 options interface | Dart 的 `int`、枚举、命名参数或已有设置类，不增加空包装类 |
 
 Dart 的历法设置集中在 `CalendarOptions`，而 JS 在 `BaziOptionsInput` 中使用扁平字段。
-JSON 仍接受/输出扁平字段。Dart 额外保留底层 `eventAccuracy`；读取没有该字段的 JS 选项时默认 `mid`。
+JSON 仍接受/输出扁平字段；两端都保留 `eventAccuracy`，读取旧快照缺少该字段时默认 `mid`。
 
 本表不承诺旧 Dart 0.6 展示层类的兼容，详见 `migration.md`。
 
