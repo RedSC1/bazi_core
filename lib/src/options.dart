@@ -1,6 +1,6 @@
 part of '../bazi_core.dart';
 
-/// Immutable per-chart options. No process-wide settings or FFI dependency.
+/// Immutable per-chart options with no process-wide settings.
 class BaziOptions {
   final CalendarOptions calendarOptions;
   final RatHourMode ratHourMode;

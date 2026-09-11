@@ -76,6 +76,7 @@ final options = BaziOptions(
 - `calendarOptions.eventAccuracy` 控制定气定朔算法档位，默认 `mid`，可选 `fast`、`accurate`。
 - `pillarHistoricalMode` 控制年、月柱是否采用历史节气日；与天文计算精度独立。
 - `clockMode` 可选民用钟表时间、平太阳时、真太阳时。太阳时需要提供经度。
+- `clockMode` 默认 `BaziClockMode.civil`；旧版 `TimePack`／`createBySolarDate` 默认启用真太阳时，迁移旧调用时应显式选择 `BaziClockMode.trueSolar` 并填写经度。
 - `ZonedTime.offsetMinutes` 表示输入钟表的时区；`calendarOptions` 表示历法设置，两者独立。
 - `fromInstant(jdUT1, virtualTime)` 接受物理时刻和已处理的计算钟表，不会再次转换太阳时。
 - 年份采用天文编号，`0` 为公元前 1 年；使用 1582 年切换的儒略／格里高利混合历。

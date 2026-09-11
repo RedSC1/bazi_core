@@ -20,6 +20,65 @@
 演示脚本不作为兼容层保留。需要农历信息时，直接调用独立 `ephemeris_lite`，
 不在八字图表上隐含另一套历法状态。
 
+## `TimePack` 的替代方式
+
+`TimePack` 原来同时保存钟表时间、UTC、北京时间、真太阳时、排盘钟表和排盘选项。
+新版将这些概念拆开，避免把物理瞬间与用于定日柱、时柱的虚拟钟面混为一谈：
+
+| `TimePack` 字段／参数 | 新版 |
+| --- | --- |
+| `clockTime`、`timezone` | `ZonedTime`；时区改用整数分钟 `offsetMinutes` |
+| `utcTime` | `clock.toJulianTime().toZonedTime(0)` |
+| `bjClt` | `clock.toJulianTime().toZonedTime(480)` |
+| `solarTime.trueSolarTime` | `trueSolarTime(clock, longitudeDeg)` |
+| `virtualTime` | `chart.birthCivilTime`，或先自行计算后传给 `BaziChart.fromInstant` |
+| `location` | 排盘太阳时只需要 `BaziOptions.longitudeDeg`；纬度不参与该换算 |
+| `ratHourMode` | `BaziOptions.ratHourMode` |
+
+普通民用钟表时间直接排盘：
+
+```dart
+final clock = ZonedTime(
+  year: 2026,
+  month: 2,
+  day: 18,
+  hour: 12,
+  offsetMinutes: 480,
+);
+final chart = BaziChart.fromZonedTime(
+  clock,
+  options: BaziOptions(
+    gender: Gender.male,
+    calendarOptions: CalendarOptions(utcOffsetMinutes: 480),
+  ),
+);
+```
+
+若要复现旧 `TimePack.createBySolarTime()` 和 `createBySolarDate()` 默认启用真太阳时的行为，
+必须显式选择真太阳时并给出经度：
+
+```dart
+final chart = BaziChart.fromZonedTime(
+  clock,
+  options: BaziOptions(
+    gender: Gender.male,
+    calendarOptions: CalendarOptions(utcOffsetMinutes: 480),
+    clockMode: BaziClockMode.trueSolar,
+    longitudeDeg: 116.4074,
+    ratHourMode: RatHourMode.nextDay,
+  ),
+);
+
+final instant = clock.toJulianTime();
+final utc = instant.toZonedTime(0);
+final beijing = instant.toZonedTime(480);
+final apparentSolarClock = trueSolarTime(clock, 116.4074);
+```
+
+新版默认 `BaziClockMode.civil`，不会像旧入口那样在未声明时自动套用东经 120°的真太阳时。
+若应用已经分别保存物理瞬间和修正后的排盘钟表，可用
+`BaziChart.fromInstant(instant, virtualTime)`，此入口不会再次进行太阳时修正。
+
 ## 测试迁移依据
 
 - `primitives-cpp.json`：3,848 组有限域穷举，覆盖十神、藏干、空亡、长生、关系、流月/流时、司令。
