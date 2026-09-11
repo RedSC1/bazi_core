@@ -29,3 +29,12 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 /build/
 /coverage/
+
+# Local planning and experiment artifacts
+plans/
+design/
+*.plan.md
+
+# Local compiled smoke artifacts
+*.js.deps
+*.js.map
