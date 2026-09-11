@@ -42,7 +42,7 @@ JS 直接对拍另用更严格的容差检查语言移植误差，不能将前�
 node tool/generate_js_oracle.mjs ../taiyin-lite
 ```
 
-当前仅供开发，`publish_to: none`，底层使用本地 path 依赖。发布前仍需审查公开 API、
-迁移文档并将底层依赖换为已发布版本；本次不发布到 pub.dev。
+`1.0.0-beta.1` 已改用公开发布的 `ephemeris_lite`。从 `0.6.x` 升级时需要迁移调用点，
+不应依赖旧版的全局状态或展示层对象。
 
 完整公开接口对应见 [api-map.md](api-map.md)；新用户模块扩展见 [shen-sha-catalog.md](shen-sha-catalog.md)。

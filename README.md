@@ -3,16 +3,25 @@
 基于 `ephemeris_lite` 的纯 Dart 八字库，由本项目的 `bazi-lite` 移植。
 支持四柱、十神、藏干、长生、纳音、神煞、刑冲合害、起运与运表，以及出生日期和时辰反查。
 
-> 当前为 `0.7.0-dev.1` 重写分支，尚未发布。API 与旧版不兼容；旧主分支及 Git 历史保留。
-> 不再依赖 `sxwnl_spa_dart`，也不使用 FFI。底层暂通过同级目录引用 `ephemeris_lite`。
+> **重大破坏性更新**：重写版 API 与旧版 `0.6.x` 不兼容，升级前请阅读[迁移说明](https://github.com/RedSC1/bazi_core/blob/main/doc/migration.md)。旧版实现和授权仍保留在 Git 历史中。
+> 新版将天文与历法内核由 `sxwnl_spa_dart` 迁移至 `ephemeris_lite`。
 
 旧版采用的 `sxwnl_spa_dart` 以既有算法移植与兼容为主要目标，不适合持续加入排盘专用的底层能力。重写版改用本项目维护的 `ephemeris_lite`，便于统一定制气朔精度、历史历法归日、太阳时和子时边界等需要天文内核配合的功能。
 
 排盘所用民用日期范围跟随内核，为天文纪年 −6000～10000 年；年 `0` 表示公元前 1 年。该范围表示接口可计算的目标区间，不代表所有年代具有相同精度；历史历法和 ΔT 的限制以 `ephemeris_lite` 文档为准。
 
-## 开发依赖
+当前测试版本：`1.0.0-beta.1`。
 
-将 `bazi_core` 与 `ephemeris_lite` 放在同一父目录，然后在本包运行：
+## 安装
+
+```yaml
+dependencies:
+  bazi_core: 1.0.0-beta.1
+```
+
+运行 `dart pub get`，Flutter 项目使用 `flutter pub get`。
+
+检出仓库后可运行：
 
 ```sh
 dart pub get
@@ -128,7 +137,7 @@ final matches = reverseLookupBazi(
 
 ## 测试与迁移
 
-见 [迁移说明](doc/migration.md)。测试包括共享 C++ 夹具、JS 直接对拍、旧版回归案例，
+见 [迁移说明](https://github.com/RedSC1/bazi_core/blob/main/doc/migration.md)。测试包括共享 C++ 夹具、JS 直接对拍、旧版回归案例，
 以及 Dart 编译到 JavaScript 后的冒烟测试。
 
 ```sh
@@ -140,11 +149,11 @@ node /tmp/bazi-web-smoke.js
 
 ## 许可
 
-新实现移植自本项目 MPL-2.0 的 `bazi-lite`，采用 MPL-2.0，见 [LICENSE](LICENSE)。
+新实现移植自本项目 MPL-2.0 的 `bazi-lite`，采用 MPL-2.0，见 [LICENSE](https://github.com/RedSC1/bazi_core/blob/main/LICENSE)。
 旧版 MIT 实现的许可保留在其 Git 历史中；依赖来源见
-[第三方说明](THIRD_PARTY_NOTICES.zh-CN.md)。
+[第三方说明](https://github.com/RedSC1/bazi_core/blob/main/THIRD_PARTY_NOTICES.zh-CN.md)。
 
 ## 扩展规则与完整接口表
 
-[公开 API 对应表](doc/api-map.md) 列出 JS 导出项的 Dart 对应。
-[神煞用户模块](doc/shen-sha-catalog.md) 使用不可变目录与选择快照，内置定义只能停用，不能覆盖或删除。
+[公开 API 对应表](https://github.com/RedSC1/bazi_core/blob/main/doc/api-map.md) 列出 JS 导出项的 Dart 对应。
+[神煞用户模块](https://github.com/RedSC1/bazi_core/blob/main/doc/shen-sha-catalog.md) 使用不可变目录与选择快照，内置定义只能停用，不能覆盖或删除。
