@@ -1,5 +1,5 @@
 name: bazi_core
-version: 1.0.0-beta.1
+version: 1.0.0
 description: Pure Dart BaZi charts and fortune calculations backed by ephemeris_lite.
 repository: https://github.com/RedSC1/bazi_core
 issue_tracker: https://github.com/RedSC1/bazi_core/issues
@@ -11,7 +11,7 @@ topics:
 environment:
   sdk: ^3.10.0
 dependencies:
-  ephemeris_lite: ^1.0.0-beta.2
+  ephemeris_lite: ^1.0.0
 dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6

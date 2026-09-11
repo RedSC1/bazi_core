@@ -10,13 +10,13 @@
 
 排盘所用民用日期范围跟随内核，为天文纪年 −6000～10000 年；年 `0` 表示公元前 1 年。该范围表示接口可计算的目标区间，不代表所有年代具有相同精度；历史历法和 ΔT 的限制以 `ephemeris_lite` 文档为准。
 
-当前测试版本：`1.0.0-beta.1`。
+当前稳定版本：`1.0.0`。
 
 ## 安装
 
 ```yaml
 dependencies:
-  bazi_core: 1.0.0-beta.1
+  bazi_core: ^1.0.0
 ```
 
 运行 `dart pub get`，Flutter 项目使用 `flutter pub get`。
